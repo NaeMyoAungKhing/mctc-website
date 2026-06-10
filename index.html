@@ -846,6 +846,109 @@
   }
   .partner-item:last-child::after { content: ''; }
 
+  /* ============ STUDENT WORK ============ */
+  .student-work {
+    padding: 6rem 4rem 7rem;
+    border-top: 1px solid var(--line);
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .sw-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--violet-soft);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .sw-title {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.8rem;
+  }
+  .sw-sub {
+    color: var(--ink-dim);
+    max-width: 56ch;
+    margin-bottom: 3rem;
+  }
+  .sw-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+    margin-bottom: 3rem;
+  }
+  .sw-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-2);
+    transition: transform 0.35s, border-color 0.35s, box-shadow 0.35s;
+  }
+  .sw-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--violet);
+    box-shadow: 0 14px 40px rgba(138,75,208,0.25);
+  }
+  .sw-card img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.96);
+    transition: filter 0.35s, transform 0.35s;
+  }
+  .sw-card:hover img { filter: saturate(1.1); transform: scale(1.03); }
+  .sw-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .sw-name {
+    font-weight: 500;
+    font-size: 0.86rem;
+  }
+  .sw-level {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--bg);
+    background: var(--violet-soft);
+    border-radius: 4px;
+    padding: 0.18rem 0.5rem;
+  }
+  .sw-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--violet);
+    padding: 0.85rem 1.4rem;
+    border-radius: 6px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .sw-cta:hover {
+    background: rgba(138,75,208,0.15);
+    box-shadow: 0 0 24px var(--violet-glow);
+  }
+  .sw-cta::after { content: '→'; color: var(--gold); }
+  @media (max-width: 900px) {
+    .student-work { padding: 4rem 1.25rem 5rem; }
+    .sw-grid { grid-template-columns: repeat(2, 1fr); gap: 0.9rem; }
+  }
+
   /* ============ FOOTER ============ */
   footer {
     padding: 4rem 3rem 2rem;
@@ -943,6 +1046,7 @@
     <a href="#train">Train</a>
     <a href="#place">Place</a>
     <a href="#loop">The Loop</a>
+    <a href="#showcase">Showcase</a>
     <a href="#contact">Contact</a>
   </div>
 </nav>
@@ -1182,9 +1286,25 @@
   </div>
 </section>
 
+<!-- ========== STUDENT WORK ========== -->
+<section class="student-work" id="showcase">
+  <div class="sw-label">05 / Student Work</div>
+  <h2 class="sw-title">The flame, on paper</h2>
+  <p class="sw-sub">Real pieces from the Digital Art program — chibi, anime, comics, mech and more. Every artist below trained at MCTC. Click through to the full exhibition.</p>
+  <div class="sw-grid">
+    <a class="sw-card" href="showcase/"><img src="images/sw_01_moe_art04.jpg" alt="Artwork by Moe Phyu Sin Thant" loading="lazy" /><div class="sw-meta"><span class="sw-name">Moe Phyu Sin Thant</span><span class="sw-level">HND 5</span></div></a>
+    <a class="sw-card" href="showcase/"><img src="images/sw_02_khaing_art01.jpg" alt="Artwork by Khaing Yi Mon" loading="lazy" /><div class="sw-meta"><span class="sw-name">Khaing Yi Mon</span><span class="sw-level">L3B9</span></div></a>
+    <a class="sw-card" href="showcase/"><img src="images/sw_04_saung_art02.jpg" alt="Artwork by Saung Akyinnar" loading="lazy" /><div class="sw-meta"><span class="sw-name">Saung Akyinnar</span><span class="sw-level">L3B7</span></div></a>
+    <a class="sw-card" href="showcase/"><img src="images/sw_06_hein_art01.jpg" alt="Artwork by Hein Zay Yar Htoo" loading="lazy" /><div class="sw-meta"><span class="sw-name">Hein Zay Yar Htoo</span><span class="sw-level">HND 5</span></div></a>
+    <a class="sw-card" href="showcase/"><img src="images/sw_07_nang_art01.jpg" alt="Artwork by Nang Hlaing Kham Hoom" loading="lazy" /><div class="sw-meta"><span class="sw-name">Nang Hlaing Kham Hoom</span><span class="sw-level">L3B7</span></div></a>
+    <a class="sw-card" href="showcase/"><img src="images/sw_03_soe_art04.jpg" alt="Artwork by Soe Maung Maung Lwin" loading="lazy" /><div class="sw-meta"><span class="sw-name">Soe Maung Maung Lwin</span><span class="sw-level">L3B7</span></div></a>
+  </div>
+  <a class="sw-cta" href="showcase/">Enter the Digital Art Showcase</a>
+</section>
+
 <!-- ========== PARTNERS ========== -->
 <section class="partners">
-  <div class="partners-label">05 / Coalition</div>
+  <div class="partners-label">06 / Coalition</div>
   <div class="partners-title">We co-build with</div>
   <div class="marquee">
     <span class="partner-item">Nestlé</span>
