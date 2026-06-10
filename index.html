@@ -4,6 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MCTC — Train and Place</title>
+<script>
+/* 3D experience is the default homepage; ?classic (or a prior choice this session) keeps you here */
+(function(){
+  try {
+    if (location.search.indexOf('classic') !== -1) { sessionStorage.setItem('mctcClassic','1'); }
+    else if (!sessionStorage.getItem('mctcClassic')) { location.replace('experience/'); }
+  } catch(e) {}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
