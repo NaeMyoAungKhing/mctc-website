@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCTC — The Loop · A Playable Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="../favicon.png">
+<style>
+  :root {
+    --bg: #0a0816;
+    --bg-2: #110d22;
+    --ink: #f4f1ea;
+    --ink-dim: #a8a3b8;
+    --violet: #8a4bd0;
+    --violet-soft: #b08ae0;
+    --violet-deep: #5f2b8e;
+    --violet-dark: #3f3392;
+    --orange: #ff914d;
+    --orange-soft: #ffb586;
+    --green: #00bf63;
+    --green-soft: #35d98b;
+    --line: rgba(244,241,234,0.08);
+    --mono: 'JetBrains Mono', monospace;
+    --body: 'Montserrat', system-ui, sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:60;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity:0.05; mix-blend-mode:overlay;
+  }
+
+  #stage { position:fixed; inset:0; }
+  #map { width:100%; height:100%; display:block; }
+
+  .gridline { stroke: rgba(138,75,208,0.06); stroke-width:1; }
+
+  /* ====== HUD ====== */
+  #hud {
+    position:fixed; top:0; left:0; right:0; z-index:20;
+    display:flex; align-items:center; gap:1.2rem;
+    padding: 0.9rem 1.4rem;
+    background: linear-gradient(180deg, rgba(10,8,22,0.92), rgba(10,8,22,0));
+    opacity:0; transition: opacity .6s;
+  }
+  #hud.on { opacity:1; }
+  #hud img { width:30px; height:30px; object-fit:contain; }
+  #hud .ttl { font-weight:800; font-size:0.95rem; letter-spacing:0.02em; }
+  #hud .ttl span { color: var(--orange); }
+  .stats { display:flex; gap:1rem; margin-left:auto; }
+  .stat { width:130px; }
+  .stat .lbl {
+    font-family:var(--mono); font-size:0.56rem; letter-spacing:0.18em;
+    text-transform:uppercase; color:var(--ink-dim); display:flex; justify-content:space-between; margin-bottom:4px;
+  }
+  .stat .bar { height:5px; background:rgba(244,241,234,0.1); border-radius:3px; overflow:hidden; }
+  .stat .fill { height:100%; width:0%; border-radius:3px; transition: width .7s cubic-bezier(.2,.9,.3,1.2); }
+  .stat.craft .fill { background: linear-gradient(90deg, var(--violet-deep), var(--violet-soft)); }
+  .stat.hustle .fill { background: linear-gradient(90deg, #d96a26, var(--orange-soft)); }
+  .stat.heart .fill { background: linear-gradient(90deg, #008c49, var(--green-soft)); }
+  #facts {
+    font-family:var(--mono); font-size:0.6rem; letter-spacing:0.14em; color:var(--ink-dim);
+    border:1px solid var(--line); border-radius:5px; padding:0.4rem 0.7rem; white-space:nowrap;
+  }
+  #facts b { color: var(--orange); }
+
+  /* ====== PANEL ====== */
+  #panel {
+    position:fixed; z-index:30;
+    left:50%; bottom:4vh; transform:translateX(-50%) translateY(30px);
+    width:min(680px, 94vw);
+    background: rgba(17,13,34,0.92);
+    border:1px solid rgba(138,75,208,0.35);
+    border-radius:14px;
+    padding:1.5rem 1.7rem 1.4rem;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55), 0 0 40px rgba(138,75,208,0.12);
+    opacity:0; pointer-events:none;
+    transition: opacity .45s, transform .45s;
+  }
+  #panel.on { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  #p-label {
+    font-family:var(--mono); font-size:0.6rem; letter-spacing:0.22em;
+    text-transform:uppercase; color:var(--violet-soft); margin-bottom:0.5rem;
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  #p-label::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--marker, var(--violet)); box-shadow:0 0 10px var(--marker, var(--violet)); }
+  #p-title { font-weight:800; font-size:1.35rem; letter-spacing:-0.01em; margin-bottom:0.55rem; }
+  #p-text { color:var(--ink-dim); font-size:0.92rem; line-height:1.6; min-height:3.4em; font-weight:400; }
+  #p-text b, #p-text strong { color: var(--ink); }
+  #p-text .hl { color: var(--orange); font-weight:600; }
+  #p-body { margin-top:1rem; }
+  #p-actions { margin-top:1.1rem; display:flex; flex-wrap:wrap; gap:0.6rem; }
+
+  .btn {
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink); background:transparent;
+    border:1px solid var(--violet); border-radius:7px;
+    padding:0.75rem 1.2rem; cursor:pointer;
+    transition: background .25s, box-shadow .25s, transform .15s;
+  }
+  .btn:hover { background:rgba(138,75,208,0.18); box-shadow:0 0 18px rgba(138,75,208,0.35); }
+  .btn:active { transform:scale(0.97); }
+  .btn.primary { background:var(--violet-deep); border-color:var(--violet-soft); }
+  .btn.primary:hover { background:var(--violet); }
+  .btn.ghost { border-color:var(--line); color:var(--ink-dim); }
+  .btn.correct { border-color:var(--green); background:rgba(0,191,99,0.18); color:var(--green-soft); }
+  .btn.wrong { border-color:#e0445e; background:rgba(224,68,94,0.14); color:#ff8ba0; }
+  .btn:disabled { cursor:default; opacity:0.85; }
+
+  .factline {
+    margin-top:0.9rem; font-size:0.8rem; color:var(--ink-dim);
+    border-left:2px solid var(--orange); padding:0.35rem 0 0.35rem 0.8rem;
+    animation: factin .5s;
+  }
+  .factline b { color:var(--orange); font-family:var(--mono); font-size:0.62rem; letter-spacing:0.18em; display:block; margin-bottom:2px; }
+  @keyframes factin { from { opacity:0; transform:translateX(-8px);} to {opacity:1; transform:none;} }
+
+  /* timing minigame */
+  #tgame { margin-top:0.6rem; }
+  #tg-brief { font-family:var(--mono); font-size:0.66rem; letter-spacing:0.12em; color:var(--ink-dim); margin-bottom:0.7rem; }
+  #tg-brief b { color: var(--ink); }
+  #tg-track { position:relative; height:34px; border:1px solid var(--line); border-radius:8px; background:rgba(244,241,234,0.04); overflow:hidden; cursor:pointer; }
+  #tg-zone { position:absolute; top:0; bottom:0; background:rgba(0,191,99,0.25); border-left:1px solid var(--green); border-right:1px solid var(--green); }
+  #tg-marker { position:absolute; top:-2px; bottom:-2px; width:4px; background:var(--orange); box-shadow:0 0 12px var(--orange); border-radius:2px; }
+  #tg-hint { margin-top:0.6rem; font-size:0.74rem; color:var(--ink-dim); }
+  #tg-rounds { display:flex; gap:0.4rem; margin-top:0.65rem; }
+  .pip { width:10px; height:10px; border-radius:50%; border:1px solid var(--line); }
+  .pip.hit { background:var(--green); border-color:var(--green); box-shadow:0 0 8px var(--green); }
+  .pip.miss { background:#e0445e; border-color:#e0445e; }
+
+  /* loadout */
+  .loadout { display:grid; grid-template-columns:repeat(3,1fr); gap:0.55rem; margin-top:0.6rem; }
+  .loadout .item {
+    border:1px solid var(--line); border-radius:9px; padding:0.7rem 0.6rem;
+    text-align:center; cursor:pointer; transition: border-color .2s, background .2s, transform .15s;
+  }
+  .loadout .item:hover { border-color:var(--violet); transform:translateY(-2px); }
+  .loadout .item.sel { border-color:var(--orange); background:rgba(255,145,77,0.1); box-shadow:0 0 14px rgba(255,145,77,0.18); }
+  .loadout .item .ico { font-size:1.4rem; display:block; margin-bottom:0.3rem; }
+  .loadout .item .nm { font-size:0.68rem; font-weight:600; }
+
+  /* end card */
+  #endcard { text-align:center; padding:0.4rem 0 0.2rem; }
+  #endcard .role-label { font-family:var(--mono); font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--violet-soft); }
+  #endcard h2 { font-size:1.9rem; font-weight:900; margin:0.4rem 0 0.2rem; letter-spacing:-0.02em; }
+  #endcard h2 span { color:var(--orange); }
+  #endcard .role-sub { color:var(--ink-dim); font-size:0.86rem; max-width:46ch; margin:0.4rem auto 0; line-height:1.55; }
+  #end-stats { display:flex; justify-content:center; gap:1.6rem; margin:1.2rem 0 0.4rem; font-family:var(--mono); font-size:0.66rem; letter-spacing:0.12em; color:var(--ink-dim); }
+  #end-stats b { display:block; font-size:1.25rem; color:var(--ink); font-family:var(--body); font-weight:800; }
+
+  /* splash */
+  #splash {
+    position:fixed; inset:0; z-index:40; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:1.1rem; text-align:center;
+    background: radial-gradient(ellipse at 50% 60%, rgba(63,51,146,0.25), transparent 60%), var(--bg);
+    transition: opacity .8s; padding:1.5rem;
+  }
+  #splash.off { opacity:0; pointer-events:none; }
+  #splash img { width:110px; height:110px; object-fit:contain; filter:drop-shadow(0 0 30px rgba(138,75,208,0.6)); animation: bob 3s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+  #splash .kicker { font-family:var(--mono); font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--violet-soft); }
+  #splash h1 { font-size:clamp(2.2rem,6vw,3.6rem); font-weight:900; letter-spacing:-0.02em; line-height:1.05; }
+  #splash h1 span { color:var(--orange); }
+  #splash p { color:var(--ink-dim); max-width:46ch; font-size:0.95rem; line-height:1.6; }
+  #splash .back { position:fixed; top:1.1rem; left:1.3rem; font-family:var(--mono); font-size:0.62rem; letter-spacing:0.15em; color:var(--ink-dim); text-decoration:none; border:1px solid var(--line); padding:0.5rem 0.8rem; border-radius:6px; }
+  #splash .back:hover { color:var(--ink); border-color:var(--violet); }
+
+  #flash { position:fixed; inset:0; background:white; opacity:0; pointer-events:none; z-index:50; }
+  #confetti { position:fixed; inset:0; pointer-events:none; z-index:45; }
+
+  .shake { animation: shake .35s; }
+  @keyframes shake { 0%,100%{transform:translate(0)} 20%{transform:translate(-6px,3px)} 40%{transform:translate(5px,-4px)} 60%{transform:translate(-4px,-2px)} 80%{transform:translate(3px,3px)} }
+
+  @media (max-width: 700px) {
+    .stats { display:none; }
+    #panel { bottom:2vh; padding:1.1rem 1.1rem 1rem; }
+    #p-title { font-size:1.1rem; }
+    .loadout { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <svg id="map" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<div id="hud">
+  <img src="../images/logo_mark.png" alt="MCTC" />
+  <div class="ttl">MCTC <span>// THE LOOP</span></div>
+  <div class="stats">
+    <div class="stat craft"><div class="lbl"><span>Craft</span><span id="v-craft">0</span></div><div class="bar"><div class="fill" id="b-craft"></div></div></div>
+    <div class="stat hustle"><div class="lbl"><span>Hustle</span><span id="v-hustle">0</span></div><div class="bar"><div class="fill" id="b-hustle"></div></div></div>
+    <div class="stat heart"><div class="lbl"><span>Heart</span><span id="v-heart">0</span></div><div class="bar"><div class="fill" id="b-heart"></div></div></div>
+  </div>
+  <div id="facts"><b id="factcount">0</b>/10 FACTS</div>
+</div>
+
+<div id="panel">
+  <div id="p-label">NODE</div>
+  <div id="p-title"></div>
+  <div id="p-text"></div>
+  <div id="p-body"></div>
+  <div id="p-actions"></div>
+</div>
+
+<div id="splash">
+  <a class="back" href="../">&larr; MCTC main site</a>
+  <img src="../images/logo_mark.png" alt="MCTC logo" />
+  <div class="kicker">A playable journey &middot; Myanmar Creative Technology College</div>
+  <h1>You are a <span>spark</span>.<br/>Become a flame.</h1>
+  <p>Travel the real MCTC system — Train, Place, and the Loop. Your choices shape what kind of creative you become. Takes ~3 minutes.</p>
+  <button class="btn primary" id="startBtn">&#9654;&nbsp; Ignite</button>
+</div>
+
+<canvas id="confetti"></canvas>
+<div id="flash"></div>
+
+<script>
+/* =================== DATA =================== */
+const NODES = {
+  mctc:      { x:900,  y:450, r:46, c:'orange', label:'ROOT · 00',        title:'MCTC' },
+  train:     { x:600,  y:250, r:32, c:'violet', label:'BRANCH A',              title:'Train' },
+  learn:     { x:380,  y:130, r:20, c:'violet', label:'A.1 · LEARN',      title:'Learn' },
+  ojt:       { x:480,  y:480, r:20, c:'violet', label:'A.2 · OJT',        title:'On-Job Training' },
+  events:    { x:280,  y:620, r:16, c:'violet', label:'A.3 · EVENTS',     title:'Events' },
+  coalitions:{ x:580,  y:720, r:16, c:'violet', label:'A.4 · COALITIONS', title:'Coalitions' },
+  place:     { x:1280, y:250, r:32, c:'green',  label:'BRANCH B',              title:'Place' },
+  lecturers: { x:1480, y:140, r:20, c:'green',  label:'B.1 · LECTURERS',  title:'Lecturers' },
+  studio:    { x:1480, y:450, r:20, c:'green',  label:'B.2 · STUDIO',     title:'In-House Studio' },
+  partners:  { x:1420, y:720, r:20, c:'green',  label:'B.3 · PARTNERS',   title:'Partner Businesses' },
+  loop:      { x:900,  y:770, r:26, c:'white',  label:'THE RETURN',            title:'The Loop' },
+};
+const EDGES = [
+  ['mctc','train'], ['train','learn'], ['train','ojt'], ['ojt','events'],
+  ['events','coalitions'], ['mctc','place'], ['place','lecturers'],
+  ['place','studio'], ['place','partners'], ['coalitions','loop'],
+  ['partners','loop'], ['loop','mctc']
+];
+const COLORS = { orange:'#ff914d', violet:'#8a4bd0', green:'#00bf63', white:'#e8e4f4' };
+
+const state = { craft:0, hustle:0, heart:0, facts:new Set(), node:'mctc', placedAt:null };
+
+/* =================== MAP RENDER =================== */
+const svg = document.getElementById('map');
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  (parent || svg).appendChild(e); return e;
+}
+const defs = el('defs', {});
+const flt = el('filter', { id:'glow', x:'-80%', y:'-80%', width:'260%', height:'260%' }, defs);
+el('feGaussianBlur', { stdDeviation:'7', result:'b' }, flt);
+const mrg = el('feMerge', {}, flt);
+el('feMergeNode', { in:'b' }, mrg);
+el('feMergeNode', { in:'SourceGraphic' }, mrg);
+for (const key in COLORS) {
+  const g = el('radialGradient', { id:'g-'+key, cx:'35%', cy:'35%' }, defs);
+  el('stop', { offset:'0%', 'stop-color':'#ffffff', 'stop-opacity':'0.95' }, g);
+  el('stop', { offset:'45%', 'stop-color':COLORS[key] }, g);
+  el('stop', { offset:'100%', 'stop-color':COLORS[key], 'stop-opacity':'0.75' }, g);
+}
+for (let i=0;i<=16;i++) el('line', { x1:i*100, y1:0, x2:i*100, y2:900, class:'gridline' });
+for (let i=0;i<=9;i++)  el('line', { x1:0, y1:i*100, x2:1600, y2:i*100, class:'gridline' });
+const edgeEls = {};
+EDGES.forEach(([a,b]) => {
+  const A = NODES[a], B = NODES[b];
+  edgeEls[a+'-'+b] = el('line', {
+    x1:A.x, y1:A.y, x2:B.x, y2:B.y,
+    stroke:'rgba(138,75,208,0.22)', 'stroke-width':1.5,
+    'stroke-dasharray':'3 6'
+  });
+});
+const nodeEls = {};
+for (const id in NODES) {
+  const n = NODES[id];
+  const g = el('g', { opacity:0.5 });
+  el('circle', { cx:n.x, cy:n.y, r:n.r, fill:'url(#g-'+n.c+')', filter:'url(#glow)' }, g);
+  const t1 = el('text', { x:n.x, y:n.y + n.r + 26, 'text-anchor':'middle', fill:'#f4f1ea',
+    'font-family':'Montserrat, sans-serif', 'font-style':'italic', 'font-size':19, 'font-weight':600 }, g);
+  t1.textContent = n.title;
+  const t2 = el('text', { x:n.x, y:n.y + n.r + 44, 'text-anchor':'middle', fill:'#5a5470',
+    'font-family':'JetBrains Mono, monospace', 'font-size':10, 'letter-spacing':'2' }, g);
+  t2.textContent = n.label;
+  nodeEls[id] = g;
+}
+const trailLayer = el('g', {});
+const player = el('g', {});
+const pGlow = el('circle', { r:16, fill:COLORS.orange, opacity:0.35, filter:'url(#glow)' }, player);
+const pCoreWrap = el('g', {}, player);
+const pCore = el('path', { fill:'url(#g-orange)', filter:'url(#glow)',
+  d:'M0,-16 C7,-7 10,-2 10,4 a10,10 0 1 1 -20,0 C-10,-2 -7,-7 0,-16 Z' }, pCoreWrap);
+el('circle', { cy:4, r:4, fill:'#fff', opacity:0.9 }, pCoreWrap);
+
+let px = NODES.mctc.x, py = NODES.mctc.y;
+function setPlayer(x,y){ px=x; py=y; player.setAttribute('transform', 'translate('+x+','+y+')'); }
+setPlayer(px,py);
+(function flick(t){
+  const s = 1 + Math.sin(t/180)*0.06 + Math.sin(t/47)*0.03;
+  pCoreWrap.setAttribute('transform', 'scale('+s+')');
+  pGlow.setAttribute('r', 16 + Math.sin(t/220)*2 + totalScore()*0.5);
+  requestAnimationFrame(flick);
+})(performance.now());
+
+function totalScore(){ return state.craft + state.hustle + state.heart; }
+
+function lightNode(id, on) {
+  nodeEls[id].setAttribute('opacity', on === false ? 0.5 : 1);
+}
+function litEdge(a,b) {
+  const e = edgeEls[a+'-'+b] || edgeEls[b+'-'+a];
+  if (!e) return;
+  e.setAttribute('stroke', 'rgba(255,145,77,0.7)');
+  e.setAttribute('stroke-dasharray','none');
+  e.setAttribute('stroke-width','2.5');
+}
+
+function travelTo(id) {
+  return new Promise(res => {
+    const n = NODES[id];
+    const sx = px, sy = py, dx = n.x - sx, dy = n.y - sy;
+    const dur = Math.max(600, Math.hypot(dx,dy) * 1.4);
+    const start = performance.now();
+    (function step(t){
+      let k = Math.min(1, (t - start) / dur);
+      k = k<0.5 ? 2*k*k : 1 - Math.pow(-2*k+2,2)/2;
+      setPlayer(sx + dx*k, sy + dy*k);
+      if (Math.random() < 0.5) spark(px, py);
+      if (k < 1) requestAnimationFrame(step);
+      else { litEdge(state.node, id); state.node = id; lightNode(id); res(); }
+    })(start);
+  });
+}
+function spark(x,y) {
+  const s = el('circle', { cx:x+(Math.random()*16-8), cy:y+(Math.random()*16-8),
+    r:1.5+Math.random()*2, fill:Math.random()<0.5?COLORS.orange:COLORS.violet, opacity:0.8 }, trailLayer);
+  let o = 0.8;
+  (function fade(){
+    o -= 0.03;
+    if (o<=0) { s.remove(); return; }
+    s.setAttribute('opacity',o);
+    s.setAttribute('cy', (+s.getAttribute('cy'))+0.4);
+    requestAnimationFrame(fade);
+  })();
+}
+
+/* =================== UI HELPERS =================== */
+function $(id){ return document.getElementById(id); }
+const panel = $('panel'), pTitle = $('p-title'), pText = $('p-text'),
+      pBody = $('p-body'), pActs = $('p-actions'), pLabel = $('p-label');
+
+function showPanel(node, title, html) {
+  const n = NODES[node];
+  pLabel.textContent = n ? n.label : 'SYSTEM';
+  panel.style.setProperty('--marker', n ? COLORS[n.c] : '#8a4bd0');
+  pTitle.textContent = title;
+  pBody.innerHTML = ''; pActs.innerHTML = '';
+  panel.classList.add('on');
+  return typewrite(html);
+}
+function hidePanel(){ panel.classList.remove('on'); return new Promise(r=>setTimeout(r,420)); }
+
+let twToken = 0;
+function typewrite(html) {
+  return new Promise(res => {
+    const my = ++twToken;
+    const tmp = document.createElement('div'); tmp.innerHTML = html;
+    const plain = tmp.textContent;
+    let i = 0, done = false;
+    pText.innerHTML = '';
+    function finish(){ if (done) return; done = true; pText.innerHTML = html; pText.onclick = null; res(); }
+    pText.onclick = finish;
+    (function step(){
+      if (my !== twToken || done) return;
+      i += 2;
+      if (i >= plain.length) { finish(); return; }
+      pText.textContent = plain.slice(0, i);
+      setTimeout(step, 16);
+    })();
+  });
+}
+function btn(label, cls, fn) {
+  const b = document.createElement('button');
+  b.className = 'btn ' + (cls||'');
+  b.innerHTML = label;
+  b.onclick = fn;
+  pActs.appendChild(b);
+  return b;
+}
+function fact(tag, text) {
+  if (!state.facts.has(tag)) {
+    state.facts.add(tag);
+    $('factcount').textContent = state.facts.size;
+  }
+  const d = document.createElement('div');
+  d.className = 'factline';
+  d.innerHTML = '<b>FACT UNLOCKED</b>' + text;
+  pBody.appendChild(d);
+}
+function addStat(k, v) {
+  state[k] = Math.min(10, state[k] + v);
+  $('v-'+k).textContent = state[k];
+  $('b-'+k).style.width = (state[k]*10) + '%';
+}
+function flashFX() {
+  const f = $('flash');
+  f.style.transition = 'none'; f.style.opacity = 0.4;
+  requestAnimationFrame(()=>{ f.style.transition = 'opacity .5s'; f.style.opacity = 0; });
+}
+function shake(){ document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake'); }
+
+/* =================== SCENES =================== */
+function choice(q, opts) {
+  return new Promise(res => {
+    const d = document.createElement('div');
+    d.style.cssText = 'margin-top:0.8rem;font-weight:600;font-size:0.9rem;';
+    d.textContent = q; pBody.appendChild(d);
+    opts.forEach(function(pair) {
+      btn(pair[0], '', function() {
+        addStat(pair[1], 2);
+        Array.prototype.forEach.call(pActs.children, function(b){ b.disabled = true; });
+        setTimeout(res, 450);
+      });
+    });
+  });
+}
+
+async function scene_intro() {
+  $('hud').classList.add('on');
+  lightNode('mctc');
+  await showPanel('mctc', 'Welcome to MCTC',
+    'Yangon, <b>est. 2017</b>. Myanmar’s first private college for Creative Technology, Art &amp; Design — <span class="hl">Pearson UK BTEC Centre No. 92672</span>. You and <b>514 other students</b> walk in with the same question: <i>can love for a craft become a career?</i>');
+  fact('est', 'MCTC has 515 students and 21 diploma programs (2026), accredited by Pearson UK since 2019.');
+  await choice('What drives you, spark?', [
+    ['🎨  I want to master the craft', 'craft'],
+    ['⚡  I want to ship real work', 'hustle'],
+    ['💖  I want to lift others up', 'heart'],
+  ]);
+  await hidePanel();
+}
+
+async function scene_learn() {
+  await travelTo('train');
+  await travelTo('learn');
+  await showPanel('learn', 'A.1 — Learn',
+    'BTEC curriculum, <b>Level 3 Foundation up to HND (Level 5)</b>. But theory only counts here if it survives a deadline. Pop quiz, spark — show me what you absorb.');
+  const QUIZ = [
+    { q:'Which of these is a real MCTC program track?',
+      a:['Digital Art & Design','Quantum Accounting','Marine Biology','Competitive Karaoke'], c:0,
+      f:'Tracks: Digital Art & Design, Game Development, Animation & Motion, Build & Crafting.', tag:'programs'},
+    { q:'How many credits (CATS) does the full bachelor pathway carry?',
+      a:['60','120','240','9000'], c:2,
+      f:'120 CATS at HND level — 240 CATS for the full bachelor pathway.', tag:'cats'},
+    { q:'What happens when you make a mistake at MCTC?',
+      a:['Expelled, obviously','Mentors correct it in production','Permanent record','Push-ups'], c:1,
+      f:'Mistakes are corrected by mentors and senior lecturers — not punished by exams.', tag:'mistakes'},
+  ];
+  let correct = 0;
+  for (const item of QUIZ) {
+    await typewrite('<b>' + item.q + '</b>');
+    pBody.innerHTML = ''; pActs.innerHTML = '';
+    await new Promise(res => {
+      item.a.forEach(function(opt, i) {
+        btn(opt, '', function(ev) {
+          Array.prototype.forEach.call(pActs.children, function(b){ b.disabled = true; });
+          if (i === item.c) { ev.currentTarget.classList.add('correct'); correct++; addStat('craft',1); flashFX(); }
+          else { ev.currentTarget.classList.add('wrong'); pActs.children[item.c].classList.add('correct'); shake(); }
+          fact(item.tag, item.f);
+          setTimeout(res, 1500);
+        });
+      });
+    });
+  }
+  await typewrite(correct === 3
+    ? '<span class="hl">Perfect score.</span> The lecturers are already whispering about you.'
+    : correct >= 1
+    ? '<b>' + correct + '/3.</b> Good — curiosity matters more than perfection here.'
+    : '<b>0/3.</b> Rough start. Luckily MCTC grades by growth, not by first attempts.');
+  pBody.innerHTML=''; pActs.innerHTML='';
+  await new Promise(r => btn('Continue →', 'primary', r));
+  await hidePanel();
+}
+
+async function scene_ojt() {
+  await travelTo('ojt');
+  await showPanel('ojt', 'A.2 — On-Job Training',
+    'No student graduates without entering <b>real production</b>. Today: three live client briefs. Hit the delivery window — click when the marker is in the <span style="color:var(--green-soft)">green zone</span>.');
+  const BRIEFS = [
+    ['Ooredoo', 'AR Instagram filter', 26],
+    ['Nestlé Bearbrand', 'AR campaign asset', 18],
+    ['MSI', 'launch campaign visual', 12],
+  ];
+  pBody.innerHTML = '<div id="tgame">' +
+    '<div id="tg-brief"></div>' +
+    '<div id="tg-track"><div id="tg-zone"></div><div id="tg-marker"></div></div>' +
+    '<div id="tg-rounds"></div>' +
+    '<div id="tg-hint">Click / tap the bar at the right moment.</div></div>';
+  const track = $('tg-track'), zone = $('tg-zone'), marker = $('tg-marker'),
+        brief = $('tg-brief'), rounds = $('tg-rounds');
+  BRIEFS.forEach(function(){ const p=document.createElement('div'); p.className='pip'; rounds.appendChild(p); });
+  let hits = 0;
+  for (let r = 0; r < BRIEFS.length; r++) {
+    const client = BRIEFS[r][0], job = BRIEFS[r][1], zoneW = BRIEFS[r][2];
+    brief.innerHTML = 'BRIEF ' + (r+1) + '/3 — <b>' + client + '</b> · ' + job;
+    const zoneL = 25 + Math.random()*40;
+    zone.style.left = zoneL + '%'; zone.style.width = zoneW + '%';
+    const speed = 0.11 + r*0.05; // percent per ms
+    let live = true, pos = 0, dir = 1, last = performance.now();
+    const hit = await new Promise(res => {
+      function loop(t){
+        if (!live) return;
+        pos += (t-last)*speed; last = t;
+        if (pos >= 100) { pos = 100; dir = -1; }
+        if (pos <= 0) { pos = 0; dir = 1; }
+        if (dir === -1) pos -= 0; // direction handled via dir below
+        marker.style.left = 'calc(' + pos + '% - 2px)';
+        requestAnimationFrame(loop);
+      }
+      // rewrite loop with direction support
+      live = true; pos = 0; dir = 1; last = performance.now();
+      function loop2(t){
+        if (!live) return;
+        pos += (t-last)*speed*dir; last = t;
+        if (pos >= 100) { pos = 100; dir = -1; }
+        if (pos <= 0) { pos = 0; dir = 1; }
+        marker.style.left = 'calc(' + pos + '% - 2px)';
+        requestAnimationFrame(loop2);
+      }
+      requestAnimationFrame(function(t){ last = t; loop2(t); });
+      track.onclick = function() { live = false; res(pos >= zoneL && pos <= zoneL + zoneW); };
+    });
+    const pip = rounds.children[r];
+    if (hit) { pip.classList.add('hit'); hits++; addStat('hustle',1); flashFX(); }
+    else { pip.classList.add('miss'); shake(); }
+    await new Promise(function(r2){ setTimeout(r2, 600); });
+  }
+  fact('ojt', 'OJT connects students to paid, portfolio-building work — overseen by senior lecturers, so clients never carry the risk.');
+  await typewrite(hits === 3
+    ? 'Three for three. <span class="hl">Clients are asking for you by name.</span>'
+    : hits > 0
+    ? '<b>' + hits + '/3 shipped on time.</b> The seniors covered the rest — that’s what the mentorship net is for.'
+    : 'Missed them all — and yet nothing burned down. <b>That’s the point of OJT:</b> you fail safely here, once.');
+  if (hits > 0) addStat('craft', 1);
+  pActs.innerHTML='';
+  await new Promise(r => btn('Continue →', 'primary', r));
+  await hidePanel();
+}
+
+async function scene_events() {
+  await travelTo('events');
+  await showPanel('events', 'A.3 — Events',
+    '<b>Creative Technology Event, Junction City</b> — running every year since 2017. Your class gets a booth. You can carry <span class="hl">three things</span>. Choose your loadout.');
+  const ITEMS = [
+    ['🥽','VR headset','hustle','The VR demo line never gets shorter. Crowd magnet.'],
+    ['🖼️','Print portfolio','craft','Quiet, but an art director stared at it for ten minutes.'],
+    ['🎮','Playable game build','craft','Kids refuse to leave. Their parents ask about enrollment.'],
+    ['🦸','Mascot costume','heart','Someone has to wear it. It is 36°C. A legend is born.'],
+    ['☕','Coffee for the team','heart','Morale weapon. The whole booth crew loves you.'],
+    ['💼','Stack of name cards','hustle','Boring? Three studios called back the next week.'],
+  ];
+  pBody.innerHTML = '<div class="loadout">' + ITEMS.map(function(it,i){
+    return '<div class="item" data-i="'+i+'"><span class="ico">'+it[0]+'</span><span class="nm">'+it[1]+'</span></div>';
+  }).join('') + '</div>';
+  const picked = new Set();
+  await new Promise(res => {
+    pBody.querySelectorAll('.item').forEach(function(d){
+      d.onclick = function() {
+        const i = +d.dataset.i;
+        if (picked.has(i)) { picked.delete(i); d.classList.remove('sel'); }
+        else if (picked.size < 3) { picked.add(i); d.classList.add('sel'); }
+        if (picked.size === 3) setTimeout(res, 350);
+      };
+    });
+  });
+  pBody.querySelectorAll('.item').forEach(function(d){ d.onclick = null; });
+  for (const i of picked) {
+    const it = ITEMS[i];
+    addStat(it[2], 1);
+    const d = document.createElement('div');
+    d.className = 'factline';
+    d.innerHTML = '<b>' + it[1].toUpperCase() + '</b>' + it[3];
+    pBody.appendChild(d);
+    await new Promise(function(r){ setTimeout(r, 600); });
+  }
+  fact('cte', 'CTE ran at Junction City 2017–2024, with MSI, Wacom, Viewsonic and HOG Esports as partners — public deadlines make the work real.');
+  await typewrite('The booth survives. The work was seen. <b>Public deadlines make it real.</b>');
+  pActs.innerHTML='';
+  await new Promise(r => btn('Continue →', 'primary', r));
+  await hidePanel();
+}
+
+async function scene_coalitions() {
+  await travelTo('coalitions');
+  await showPanel('coalitions', 'A.4 — Coalitions',
+    'MCTC doesn’t sign contracts — it builds <b>coalitions</b>. A brand approaches your team for a collab. Which pitch do you back?');
+  fact('brands', 'Real coalition work: Ooredoo AR filters, Nestlé Bearbrand AR, MSI campaigns, Blackjack Thingyan festival, Yangon Water Bus.');
+  await choice('Pick your pitch:', [
+    ['🎨  An art-driven AR festival filter', 'craft'],
+    ['🚀  A mobile game for Yangon Water Bus', 'hustle'],
+    ['🤝  A free workshop tour for schools', 'heart'],
+  ]);
+  await typewrite('The coalition holds. The classroom just got bigger than the campus.');
+  pActs.innerHTML='';
+  await new Promise(r => btn('Graduation day →', 'primary', r));
+  await hidePanel();
+}
+
+async function scene_place() {
+  await travelTo('mctc');
+  await travelTo('place');
+  const s = state;
+  const top = ['craft','hustle','heart'].reduce(function(a,b){ return s[a] >= s[b] ? a : b; });
+  const dest = { craft:'studio', hustle:'partners', heart:'lecturers' }[top];
+  state.placedAt = dest;
+  await showPanel('place', 'Branch B — Place',
+    'No certificate-and-goodbye here. <b>Every graduate is routed</b> into one of three destinations. The system has been watching your <span class="hl">' + top + '</span>...');
+  fact('routed', 'Place has three paths: Lecturers (75% of faculty are alumni), the In-House Studio, and Partner Businesses.');
+  pActs.innerHTML='';
+  await new Promise(r => btn('Open the letter ✉', 'primary', r));
+  await hidePanel();
+  await travelTo(dest);
+  const SCRIPTS = {
+    lecturers: ['B.1 — Lecturers',
+      'Your heart gave you away. The invitation reads: <span class="hl">“Come back. Teach.”</span> Like <b>Naw Zun Pwint Oo</b> — alumna, now Lecturer in Digital Art &amp; Design — you’ll walk the Lecturer → Senior → Prime track.',
+      'alumni', '75% of MCTC faculty walked in as students first. Alumni know the heart of the place better than any external hire.'],
+    studio: ['B.2 — In-House Studio',
+      'Your craft speaks louder than any CV. You join the in-house teams shipping <b>EDM visuals, AR filters and game art</b> for Nestlé, MSI, Wacom, Bandai, NVIDIA, Ooredoo. <span class="hl">Earn while you teach, teach while you earn.</span>',
+      'studio', 'The In-House Studio ships real commercial work — including the HOG Mascot Project and the Yangon Water Bus mobile game.'],
+    partners: ['B.3 — Partner Businesses',
+      'Your hustle was impossible to miss. The coalition network places you <b>directly into a studio</b> — and the mentorship doesn’t end at the door. <span class="hl">Alumni stay connected.</span>',
+      'partners', 'Partner placement spans local and international teams — studios, agencies, ateliers, in-house creative departments.'],
+  };
+  const sc = SCRIPTS[dest];
+  await showPanel(dest, sc[0], sc[1]);
+  fact(sc[2], sc[3]);
+  pActs.innerHTML='';
+  await new Promise(r => btn('One year later... →', 'primary', r));
+  await hidePanel();
+}
+
+async function scene_loop() {
+  await travelTo('loop');
+  await showPanel('loop', 'The Loop',
+    'A new batch of sparks walks through the doors of 42nd Street, Botahtaung. One of them is struggling with exactly what you struggled with. <b>You know what to do.</b>');
+  fact('loop', 'The Loop is why MCTC calls itself self-sustaining: placed graduates return to mentor the next batch. No goodbye on graduation day.');
+  pActs.innerHTML='';
+  await new Promise(r => btn('Pass the flame 🔥', 'primary', r));
+  await hidePanel();
+  await travelTo('mctc');
+  flashFX(); confettiGo();
+  endCard();
+}
+
+function endCard() {
+  const s = state;
+  const TITLES = {
+    lecturers: ['THE MENTOR', 'You became faculty — part of the 75% who came back. The flame passes through you now.'],
+    studio: ['THE MAKER', 'You became the studio — shipping real work for real brands without ever leaving the family.'],
+    partners: ['THE OPERATOR', 'You became the bridge — MCTC craft, carried into the industry, still connected home.'],
+  };
+  const pair = TITLES[s.placedAt || 'studio'];
+  pLabel.textContent = 'RUN COMPLETE';
+  pTitle.textContent = '';
+  pText.innerHTML = '';
+  pBody.innerHTML = '<div id="endcard">' +
+    '<div class="role-label">Your placement</div>' +
+    '<h2>THE <span>' + pair[0].replace('THE ','') + '</span></h2>' +
+    '<div class="role-sub">' + pair[1] + '</div>' +
+    '<div id="end-stats">' +
+      '<div>CRAFT<b>' + s.craft + '</b></div>' +
+      '<div>HUSTLE<b>' + s.hustle + '</b></div>' +
+      '<div>HEART<b>' + s.heart + '</b></div>' +
+      '<div>FACTS<b>' + s.facts.size + '/10</b></div>' +
+    '</div></div>';
+  pActs.innerHTML = '';
+  btn('↻  Run it again', '', function(){ location.reload(); });
+  btn('Explore the real system →', 'primary', function(){ location.href = '../'; });
+  btn('See student art', 'ghost', function(){ location.href = '../showcase/'; });
+  panel.classList.add('on');
+}
+
+/* =================== CONFETTI =================== */
+function confettiGo() {
+  const cv = $('confetti'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const P = [], cols = ['#ff914d','#8a4bd0','#00bf63','#b08ae0','#ffb586','#35d98b'];
+  for (let i=0;i<160;i++) P.push({
+    x: Math.random()*cv.width, y: -20 - Math.random()*cv.height*0.5,
+    w: 5+Math.random()*6, h: 8+Math.random()*8,
+    vy: 2+Math.random()*3.5, vx: -1.5+Math.random()*3,
+    rot: Math.random()*Math.PI, vr: -0.1+Math.random()*0.2,
+    c: cols[Math.floor(Math.random()*cols.length)]
+  });
+  let frames = 0;
+  (function anim(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(function(p){
+      p.y += p.vy; p.x += p.vx; p.rot += p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+    });
+    if (++frames < 420) requestAnimationFrame(anim);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* =================== RUN =================== */
+async function run() {
+  await scene_intro();
+  await scene_learn();
+  await scene_ojt();
+  await scene_events();
+  await scene_coalitions();
+  await scene_place();
+  await scene_loop();
+}
+$('startBtn').onclick = function() {
+  $('splash').classList.add('off');
+  setTimeout(run, 600);
+};
+</script>
+</body>
+</html>
