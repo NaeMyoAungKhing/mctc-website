@@ -6,7 +6,8 @@
 <title>MCTC — Train and Place</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png">
 <style>
   :root {
     --bg: #0a0816;
@@ -16,26 +17,26 @@
     --ink-dim: #a8a3b8;
     --ink-faint: #5a5470;
 
-    --violet: #8b5cf6;
-    --violet-soft: #a78bfa;
-    --violet-deep: #6d28d9;
-    --violet-dark: #4c1d95;
+    --violet: #8a4bd0;
+    --violet-soft: #b08ae0;
+    --violet-deep: #5f2b8e;
+    --violet-dark: #3f3392;
 
-    --gold: #f5b942;
-    --gold-soft: #ffd07a;
-    --gold-deep: #c47e1a;
+    --gold: #ff914d;
+    --gold-soft: #ffb586;
+    --gold-deep: #d96a26;
 
-    --lavender: #c4b5fd;
-    --lavender-deep: #7c6fc4;
+    --lavender: #35d98b;
+    --lavender-deep: #00bf63;
 
     --pure: #ffffff;
 
     --line: rgba(244, 241, 234, 0.08);
     --line-strong: rgba(244, 241, 234, 0.18);
-    --violet-glow: rgba(139, 92, 246, 0.3);
+    --violet-glow: rgba(138, 75, 208, 0.3);
 
-    --display: 'Fraunces', Georgia, serif;
-    --body: 'Inter Tight', system-ui, sans-serif;
+    --display: 'Montserrat', system-ui, sans-serif;
+    --body: 'Montserrat', system-ui, sans-serif;
     --mono: 'JetBrains Mono', monospace;
   }
 
@@ -86,15 +87,14 @@
     gap: 0.6rem;
   }
   .logo-mark {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, var(--violet-soft), var(--violet) 60%, var(--violet-deep));
-    box-shadow: 0 0 24px var(--violet-glow);
+    width: 32px; height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px var(--violet-glow));
     animation: pulse 3s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%,100% { transform: scale(1); box-shadow: 0 0 24px var(--violet-glow); }
-    50% { transform: scale(1.08); box-shadow: 0 0 36px rgba(139,92,246,0.55); }
+    0%,100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--violet-glow)); }
+    50% { transform: scale(1.06); filter: drop-shadow(0 0 16px rgba(138,75,208,0.55)); }
   }
 
   .nav-links {
@@ -120,8 +120,8 @@
     min-height: 700px;
     overflow: hidden;
     background:
-      radial-gradient(ellipse at 25% 30%, rgba(139,92,246,0.18) 0%, transparent 55%),
-      radial-gradient(ellipse at 75% 70%, rgba(245,185,66,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 25% 30%, rgba(138,75,208,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 70%, rgba(255,145,77,0.10) 0%, transparent 55%),
       var(--bg);
   }
 
@@ -194,7 +194,7 @@
     text-transform: uppercase;
     padding: 0.6rem 0.9rem;
     border: 1px solid var(--violet);
-    background: rgba(139,92,246,0.08);
+    background: rgba(138,75,208,0.08);
     opacity: 0;
     animation: fadeUp 1.2s 1s forwards;
   }
@@ -321,7 +321,7 @@
     transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow:
       0 40px 100px rgba(0,0,0,0.7),
-      0 0 80px rgba(139,92,246,0.2);
+      0 0 80px rgba(138,75,208,0.2);
   }
   .modal.active {
     opacity: 1;
@@ -350,7 +350,7 @@
   .modal-close:hover {
     border-color: var(--violet);
     color: var(--ink);
-    background: rgba(139,92,246,0.1);
+    background: rgba(138,75,208,0.1);
   }
 
   .modal-marker {
@@ -451,7 +451,7 @@
     text-decoration: none;
     padding: 0.85rem 1.4rem;
     border: 1px solid var(--violet);
-    background: rgba(139,92,246,0.1);
+    background: rgba(138,75,208,0.1);
     transition: all 0.25s;
   }
   .modal-cta:hover {
@@ -546,7 +546,7 @@
   .triad-card:hover {
     border-color: var(--violet);
     transform: translateY(-6px);
-    box-shadow: 0 20px 50px rgba(139,92,246,0.15);
+    box-shadow: 0 20px 50px rgba(138,75,208,0.15);
   }
   .triad-card::before {
     content: '';
@@ -687,7 +687,7 @@
     font-family: var(--mono);
     font-size: 0.66rem;
     color: var(--violet-soft);
-    background: rgba(139,92,246,0.12);
+    background: rgba(138,75,208,0.12);
     border: 1px solid var(--violet);
     padding: 0.35rem 0.7rem;
     letter-spacing: 0.15em;
@@ -747,8 +747,8 @@
     border-top: 1px solid var(--line);
     text-align: center;
     background:
-      radial-gradient(ellipse at center, rgba(139,92,246,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse at 50% 80%, rgba(245,185,66,0.06) 0%, transparent 50%);
+      radial-gradient(ellipse at center, rgba(138,75,208,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 80%, rgba(255,145,77,0.06) 0%, transparent 50%);
     position: relative;
     overflow: hidden;
   }
@@ -935,7 +935,7 @@
 <!-- ========== NAV ========== -->
 <nav>
   <div class="logo">
-    <span class="logo-mark"></span>
+    <img class="logo-mark" src="images/logo_mark.png" alt="MCTC logo" />
     <span>MCTC</span>
   </div>
   <div class="nav-links">
@@ -1420,10 +1420,10 @@ const edges = [
 
 const nodeById = id => nodes.find(n => n.id === id);
 const colorOf = type => ({
-  root: '#f5b942',
-  train: '#8b5cf6',
-  place: '#c4b5fd',
-  flow: '#7c6fc4',
+  root: '#ff914d',
+  train: '#8a4bd0',
+  place: '#35d98b',
+  flow: '#00bf63',
   loop: '#ffffff',
 }[type]);
 
@@ -1434,9 +1434,9 @@ function renderGraph() {
     <defs>
       <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       <filter id="strongGlow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <radialGradient id="rootGrad"><stop offset="0%" stop-color="#ffd07a"/><stop offset="100%" stop-color="#c47e1a"/></radialGradient>
-      <radialGradient id="trainGrad"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#6d28d9"/></radialGradient>
-      <radialGradient id="placeGrad"><stop offset="0%" stop-color="#c4b5fd"/><stop offset="100%" stop-color="#7c6fc4"/></radialGradient>
+      <radialGradient id="rootGrad"><stop offset="0%" stop-color="#ffb586"/><stop offset="100%" stop-color="#d96a26"/></radialGradient>
+      <radialGradient id="trainGrad"><stop offset="0%" stop-color="#b08ae0"/><stop offset="100%" stop-color="#5f2b8e"/></radialGradient>
+      <radialGradient id="placeGrad"><stop offset="0%" stop-color="#35d98b"/><stop offset="100%" stop-color="#00bf63"/></radialGradient>
       <radialGradient id="loopGrad"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#9999aa"/></radialGradient>
     </defs>
   `;
@@ -1477,7 +1477,7 @@ function renderGraph() {
           <animate attributeName="opacity" values="0.08;0.22;0.08" dur="3s" repeatCount="indefinite"/>
         </circle>
         <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${grad}" stroke="${baseColor}" stroke-width="2" filter="url(#glow)" class="node-core"/>
-        <text x="${n.x}" y="${n.y + n.r + subLabelOffset}" text-anchor="middle" fill="#f4f1ea" font-family="'Fraunces', serif" font-style="italic" font-size="${labelSize}" font-weight="400" pointer-events="none">${n.title}</text>
+        <text x="${n.x}" y="${n.y + n.r + subLabelOffset}" text-anchor="middle" fill="#f4f1ea" font-family="'Montserrat', sans-serif" font-style="italic" font-size="${labelSize}" font-weight="400" pointer-events="none">${n.title}</text>
         <text x="${n.x}" y="${n.y + n.r + subLabelOffset + 18}" text-anchor="middle" fill="#a8a3b8" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="2" pointer-events="none">${n.label.toUpperCase()}</text>
       </g>
     `;
