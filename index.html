@@ -958,6 +958,169 @@
     .sw-grid { grid-template-columns: repeat(2, 1fr); gap: 0.9rem; }
   }
 
+  /* ============ STUDENT VOICES ============ */
+  .voices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+    margin-bottom: 3rem;
+  }
+  .voice {
+    border-left: 2px solid var(--violet);
+    padding: 0.4rem 0 0.4rem 1.1rem;
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .voice .vwho {
+    display: block;
+    margin-top: 0.7rem;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--violet-soft);
+  }
+
+  /* ============ PROGRAMS ============ */
+  .programs {
+    padding: 6rem 4rem;
+    border-top: 1px solid var(--line);
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .prog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.4rem;
+    margin: 3rem 0 2.2rem;
+  }
+  .prog-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.6rem 1.5rem 1.4rem;
+    background: var(--bg-2);
+    transition: border-color .3s, transform .3s, box-shadow .3s;
+  }
+  .prog-card:hover {
+    border-color: var(--violet);
+    transform: translateY(-5px);
+    box-shadow: 0 14px 40px rgba(138,75,208,0.2);
+  }
+  .prog-card .pnum {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+  .prog-card h4 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .prog-card p {
+    color: var(--ink-dim);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .prog-card .ptags {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .prog-card .ptags span {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--violet-soft);
+    border: 1px solid rgba(138,75,208,0.4);
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+  }
+  .prog-foot {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+    padding: 1.1rem 1.3rem;
+  }
+  .prog-foot b { color: var(--gold-soft); font-weight: 500; }
+
+  /* ============ ADMISSIONS ============ */
+  .admissions {
+    padding: 6rem 4rem 7rem;
+    border-top: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .adm-inner { max-width: 1300px; margin: 0 auto; }
+  .adm-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    margin-top: 3rem;
+  }
+  .adm-step {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .adm-step .n {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--gold);
+    border: 1px solid var(--gold-deep);
+    border-radius: 50%;
+    width: 42px; height: 42px;
+    flex: 0 0 42px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .adm-step h4 { font-weight: 600; font-size: 1rem; margin-bottom: 0.35rem; }
+  .adm-step p { color: var(--ink-dim); font-size: 0.87rem; line-height: 1.6; }
+  .adm-step a { color: var(--violet-soft); }
+  .faq details {
+    border-bottom: 1px solid var(--line);
+    padding: 0.4rem 0;
+  }
+  .faq summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.92rem;
+    padding: 0.8rem 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .faq summary::after {
+    content: '+';
+    color: var(--violet-soft);
+    font-family: var(--mono);
+    font-size: 1rem;
+    transition: transform .25s;
+  }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p {
+    color: var(--ink-dim);
+    font-size: 0.86rem;
+    line-height: 1.65;
+    padding: 0 0 1rem;
+  }
+  .adm-ctas { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 2.2rem; }
+  @media (max-width: 900px) {
+    .voices { grid-template-columns: 1fr; gap: 1rem; }
+    .programs, .admissions { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .adm-cols { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
   /* ============ FOOTER ============ */
   footer {
     padding: 4rem 3rem 2rem;
@@ -1056,6 +1219,8 @@
     <a href="#place">Place</a>
     <a href="#loop">The Loop</a>
     <a href="#showcase">Showcase</a>
+    <a href="#programs">Programs</a>
+    <a href="#admissions">Admissions</a>
     <a href="experience/" style="color:var(--violet-soft)">&#10022; 3D</a>
     <a href="#contact">Contact</a>
   </div>
@@ -1312,12 +1477,108 @@
     <a class="sw-card" href="showcase/"><img src="images/sw_07_nang_art01.jpg" alt="Artwork by Nang Hlaing Kham Hoom" loading="lazy" /><div class="sw-meta"><span class="sw-name">Nang Hlaing Kham Hoom</span><span class="sw-level">L3B7</span></div></a>
     <a class="sw-card" href="showcase/"><img src="images/sw_03_soe_art04.jpg" alt="Artwork by Soe Maung Maung Lwin" loading="lazy" /><div class="sw-meta"><span class="sw-name">Soe Maung Maung Lwin</span><span class="sw-level">L3B7</span></div></a>
   </div>
+  <div class="voices">
+    <div class="voice">"I specialize in fan-art illustration — chibi and anime styles. My art focuses on portraying cuteness and aesthetics; I enjoy crafting visually pleasing pieces."
+      <span class="vwho">Moe Phyu Sin Thant · HND 5</span></div>
+    <div class="voice">"Your typical awkward artist… with a cat. I'm really interested in illustration and character design — and I hope it becomes my career."
+      <span class="vwho">Khaing Yi Mon (Kairi) · L3B9</span></div>
+    <div class="voice">"A digital artist with 4 years of experience — freelance illustrator since 2021. I really love creating character designs, and I'm ready to work hard."
+      <span class="vwho">Soe MgMg Lwin · L3B7</span></div>
+  </div>
   <a class="sw-cta" href="showcase/">Enter the Digital Art Showcase</a>
+</section>
+
+<!-- ========== PROGRAMS ========== -->
+<section class="programs" id="programs">
+  <div class="sw-label">06 / Programs</div>
+  <h2 class="sw-title">Four ways in. One system underneath.</h2>
+  <p class="sw-sub">Every track runs on the same engine — Pearson UK BTEC curriculum on the Train side, real production and placement on the Place side.</p>
+  <div class="prog-grid">
+    <div class="prog-card">
+      <div class="pnum">TRACK 01</div>
+      <h4>Digital Art &amp; Design</h4>
+      <p>Illustration, character design, brand artwork. The track behind the Digital Art Showcase — and behind AR filter campaigns for Ooredoo and Nestlé Bearbrand.</p>
+      <div class="ptags"><span>ILLUSTRATION</span><span>CHARACTER DESIGN</span><span>AR FILTERS</span></div>
+    </div>
+    <div class="prog-card">
+      <div class="pnum">TRACK 02</div>
+      <h4>Game Development</h4>
+      <p>From game art to shipped titles — students contribute to live projects like the Yangon Water Bus mobile game inside the in-house studio.</p>
+      <div class="ptags"><span>GAME ART</span><span>LIVE PROJECTS</span><span>STUDIO WORK</span></div>
+    </div>
+    <div class="prog-card">
+      <div class="pnum">TRACK 03</div>
+      <h4>Animation &amp; Motion</h4>
+      <p>Motion graphics, EDM and club visuals, VR and animation showcases — work that has headlined the Creative Technology Event at Junction City.</p>
+      <div class="ptags"><span>MOTION</span><span>EDM VISUALS</span><span>VR</span></div>
+    </div>
+    <div class="prog-card">
+      <div class="pnum">TRACK 04</div>
+      <h4>Build &amp; Crafting</h4>
+      <p>Physical making — toys &amp; art, mascots, exhibition builds. Where craft leaves the screen and meets the crowd at public events.</p>
+      <div class="ptags"><span>TOYS &amp; ART</span><span>MASCOTS</span><span>EXHIBITIONS</span></div>
+    </div>
+  </div>
+  <div class="prog-foot">
+    <b>PEARSON UK BTEC · CENTRE NO. 92672</b> — Level 3 Foundation → HND (Level 5) · 120 CATS at HND, 240 CATS on the full bachelor pathway · Top-up Bachelor in development<br>
+    21 diploma programs to date · 14 batches of Level 3 · 7 batches of HND
+  </div>
+</section>
+
+<!-- ========== ADMISSIONS ========== -->
+<section class="admissions" id="admissions">
+  <div class="adm-inner">
+    <div class="sw-label">07 / Admissions</div>
+    <h2 class="sw-title">Join the loop.</h2>
+    <p class="sw-sub">No certificate-and-goodbye. You enter as a spark; the system does the rest.</p>
+    <div class="adm-cols">
+      <div>
+        <div class="adm-step"><div class="n">1</div><div>
+          <h4>Reach out</h4>
+          <p>Call <a href="tel:+9595019635">09-5019635</a> / 01-388805, or write to <a href="mailto:management@mctc-edu.com">management@mctc-edu.com</a>. Visit us at No. 125, 42nd Street, Botahtaung, Yangon.</p>
+        </div></div>
+        <div class="adm-step"><div class="n">2</div><div>
+          <h4>Start at your level</h4>
+          <p>Enter at Level 3 Foundation and progress to HND (Level 5) on the Pearson UK BTEC framework — with the Top-up Bachelor pathway in development.</p>
+        </div></div>
+        <div class="adm-step"><div class="n">3</div><div>
+          <h4>Train, then get placed</h4>
+          <p>Real client briefs and on-job training before you graduate — then the Place system routes you to faculty, the in-house studio, or a partner business.</p>
+        </div></div>
+        <div class="adm-ctas">
+          <a class="sw-cta" href="mailto:management@mctc-edu.com">Email admissions</a>
+          <a class="sw-cta" href="#showcase">See the proof first</a>
+        </div>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Is MCTC accredited?</summary>
+          <p>Yes — MCTC is Pearson UK BTEC Centre No. 92672, accredited since 2019, and Myanmar's first private college for Creative Technology, Art &amp; Design (est. 2017).</p>
+        </details>
+        <details>
+          <summary>What levels can I study?</summary>
+          <p>Level 3 Foundation through HND (Level 5). HND carries 120 CATS credits; the full bachelor pathway carries 240, with a Top-up Bachelor in development.</p>
+        </details>
+        <details>
+          <summary>Will I work on real projects?</summary>
+          <p>Yes — on-job training is built into every program. Students have shipped work for Ooredoo, Nestlé, MSI, Wacom and more, and exhibit publicly at the Creative Technology Event, held at Junction City every year since 2017.</p>
+        </details>
+        <details>
+          <summary>What happens after I graduate?</summary>
+          <p>Every graduate is routed into one of three paths: returning as faculty (75% of current lecturers are alumni), joining the in-house commercial studio, or direct placement with partner businesses.</p>
+        </details>
+        <details>
+          <summary>Where is the campus?</summary>
+          <p>No. 125, 42nd Street, Botahtaung Township, Yangon — reachable at 01-388805, 01-392793, or 09-5019635.</p>
+        </details>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ========== PARTNERS ========== -->
 <section class="partners">
-  <div class="partners-label">06 / Coalition</div>
+  <div class="partners-label">08 / Coalition</div>
   <div class="partners-title">We co-build with</div>
   <div class="marquee">
     <span class="partner-item">Nestlé</span>
@@ -1355,6 +1616,10 @@
       <a href="#train">Train</a>
       <a href="#place">Place</a>
       <a href="#loop">The Loop</a>
+      <a href="#programs">Programs</a>
+      <a href="#admissions">Admissions</a>
+      <a href="showcase/">Showcase</a>
+      <a href="experience/">3D Experience</a>
     </div>
     <div class="footer-col">
       <h5>Phone</h5>
