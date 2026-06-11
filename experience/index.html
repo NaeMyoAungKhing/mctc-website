@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0a0816" />
 <title>MCTC — The Living System · 3D Experience</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,11 +96,17 @@
   body.dragging { cursor:grabbing; }
 
   @media (max-width:700px) {
-    .sect { left:7vw; right:7vw; max-width:none; }
+    .sect { left:6vw; right:6vw; max-width:none; }
     .sect.right { text-align:left; }
+    .sect h1 { font-size:clamp(2.1rem,9vw,3rem); }
+    .sect h2 { font-size:clamp(1.7rem,7vw,2.4rem); }
+    .sect p { font-size:0.92rem; }
     #rail { display:none; }
+    #bar { padding:0.8rem 1rem; }
+    #bar .t span { display:none; }
     #bar .links a:not(.keep) { display:none; }
-    #navarrows { bottom:1rem; }
+    #navarrows { bottom:1rem; right:0.9rem; }
+    .navbtn { width:52px; height:52px; font-size:1.3rem; }
   }
 </style>
 </head>
@@ -507,7 +514,12 @@ function tick() {
   const t = clock.getElapsedTime();
   smoothP += (scrollP - smoothP) * 0.06;
   const cam = camAt(Math.min(1, Math.max(0, smoothP)));
-  camera.position.copy(cam.pos);
+  /* portrait dolly: on tall/narrow screens, pull camera back along its view ray
+     so the wide constellation isn't cropped on the sides */
+  const aspect = innerWidth / innerHeight;
+  const dolly = aspect < 1 ? (1 + (1/Math.max(aspect,0.45) - 1) * 0.85) : 1;
+  const pos = cam.look.clone().add(cam.pos.clone().sub(cam.look).multiplyScalar(dolly));
+  camera.position.copy(pos);
   camera.position.x += mouseX * 1.2;
   camera.position.y += -mouseY * 0.8;
   camera.lookAt(cam.look);
