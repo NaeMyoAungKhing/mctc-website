@@ -271,28 +271,47 @@ const vidTex = new THREE.VideoTexture(flameVid);
 vidTex.minFilter = THREE.LinearFilter;
 vidTex.magFilter = THREE.LinearFilter;
 const flameBase = ND.mctc.p.clone();
-const flameMatA = new THREE.ShaderMaterial({
-  uniforms: { uTime: { value: 0 }, uTex: { value: vidTex } },
-  transparent: true, depthWrite: false, side: THREE.DoubleSide,
-  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: `
-    uniform sampler2D uTex;
-    varying vec2 vUv;
-    void main(){
-      vec4 c = texture2D(uTex, vUv);
-      float spill = c.g - max(c.r, c.b);
-      float a = 1.0 - smoothstep(0.03, 0.16, spill);
-      c.g = min(c.g, max(c.r, c.b) * 1.08);
-      if (a < 0.03) discard;
-      gl_FragColor = vec4(c.rgb * 1.12, a);
-    }
-  `
-});
-const flameA = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2), flameMatA);
-flameA.position.copy(flameBase).add(new THREE.Vector3(0, 1.35, 0));
-flameA.visible = false; /* stay hidden until real video frames exist (avoids a black square) */
-flameVid.addEventListener('playing', function(){ flameA.visible = true; });
-scene.add(flameA);
+function hueKeyMaterial(hueRad) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uTex: { value: vidTex }, uHue: { value: hueRad } },
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `
+      uniform sampler2D uTex;
+      uniform float uHue;
+      varying vec2 vUv;
+      vec3 hueShift(vec3 color, float ang){
+        const vec3 k = vec3(0.5773502);
+        float c = cos(ang), s = sin(ang);
+        return color*c + cross(k, color)*s + k*dot(k, color)*(1.0-c);
+      }
+      void main(){
+        vec4 c = texture2D(uTex, vUv);
+        float spill = c.g - max(c.r, c.b);
+        float a = 1.0 - smoothstep(0.03, 0.16, spill);
+        c.g = min(c.g, max(c.r, c.b) * 1.08);
+        if (a < 0.03) discard;
+        vec3 col = (abs(uHue) < 0.001) ? c.rgb : clamp(hueShift(c.rgb, uHue), 0.0, 1.0);
+        gl_FragColor = vec4(col * 1.12, a);
+      }
+    `
+  });
+}
+const FLAMES = [];
+function addFlame(size, basePos, yOff, hueRad) {
+  const m = hueKeyMaterial(hueRad);
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(size, size), m);
+  mesh.position.copy(basePos).add(new THREE.Vector3(0, yOff, 0));
+  mesh.visible = false; /* hidden until real video frames exist (avoids a black square) */
+  scene.add(mesh);
+  FLAMES.push({ mesh: mesh, mat: m });
+  return mesh;
+}
+const flameA = addFlame(4.2, flameBase, 1.35, 0.0);   /* brand purple — MCTC core */
+addFlame(2.3, ND.train.p, 1.05, 1.83);                /* orange — Train branch */
+addFlame(2.3, ND.place.p, 1.05, -2.62);               /* green — Place branch */
+flameVid.addEventListener('playing', function(){ FLAMES.forEach(function(f){ f.mesh.visible = true; }); });
+const flameMatA = FLAMES[0].mat;
 const flameMatB = flameMatA, flameB = flameA;
 /* rising embers */
 const EMB = 70;
@@ -493,10 +512,10 @@ function tick() {
   camera.position.y += -mouseY * 0.8;
   camera.lookAt(cam.look);
 
-  flameMatA.uniforms.uTime.value = t;
-  flameMatB.uniforms.uTime.value = t * 1.6 + 7.0;
-  flameA.quaternion.copy(camera.quaternion);
-  flameB.quaternion.copy(camera.quaternion);
+  FLAMES.forEach(function(f){
+    f.mat.uniforms.uTime.value = t;
+    f.mesh.quaternion.copy(camera.quaternion);
+  });
   for (let ei=0; ei<EMB; ei++) {
     const d = embDat[ei];
     d.y += d.s;
