@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#0a0816" />
-<title>MCTC — The Living System · 3D Experience</title>
+<title>MCTC — The Living System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -18,9 +18,10 @@
     --mono:'JetBrains Mono',monospace; --body:'Montserrat',system-ui,sans-serif;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
   body { background:var(--bg); color:var(--ink); font-family:var(--body); -webkit-font-smoothing:antialiased; }
   #c3d { position:fixed; inset:0; z-index:0; }
-  #spacer { height:720vh; }
+  #spacer { height:560vh; }
 
   #bar {
     position:fixed; top:0; left:0; right:0; z-index:20;
@@ -29,30 +30,55 @@
   }
   #bar img { width:30px; height:30px; }
   #bar .t { font-weight:800; font-size:0.95rem; }
-  #bar .t span { color:var(--orange); }
+  #bar .t span { color:var(--violet-soft); }
   #bar .links { margin-left:auto; display:flex; gap:1.1rem; font-family:var(--mono); font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; }
   #bar .links a { color:var(--ink-dim); text-decoration:none; }
   #bar .links a:hover { color:var(--ink); }
 
   #rail { position:fixed; right:1.2rem; top:50%; transform:translateY(-50%); z-index:20; display:flex; flex-direction:column; gap:0.8rem; }
   #rail .dot { width:8px; height:8px; border-radius:50%; border:1px solid var(--ink-dim); opacity:0.5; transition:all .3s; cursor:pointer; }
-  #rail .dot.on { background:var(--orange); border-color:var(--orange); opacity:1; box-shadow:0 0 12px var(--orange); transform:scale(1.3); }
+  #rail .dot.on { background:var(--violet-soft); border-color:var(--violet-soft); opacity:1; box-shadow:0 0 12px var(--violet-soft); transform:scale(1.3); }
 
   .sect {
     position:fixed; z-index:10; left:6vw; top:50%; transform:translateY(-50%);
-    max-width:560px; opacity:0; pointer-events:none; transition:opacity .15s linear;
+    max-width:600px; opacity:0; pointer-events:none; transition:opacity .15s linear;
   }
-  .sect.right { left:auto; right:7vw; text-align:right; }
-  .sect.center { left:50%; transform:translate(-50%,-50%); text-align:center; max-width:760px; }
+  .sect.right { left:auto; right:7vw; }
+  .sect.center { left:50%; transform:translate(-50%,-50%); text-align:center; max-width:780px; }
   .sect .kick { font-family:var(--mono); font-size:0.64rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--violet-soft); margin-bottom:0.9rem; }
-  .sect h1 { font-size:clamp(2.6rem,7vw,5rem); font-weight:900; line-height:0.98; letter-spacing:-0.03em; }
-  .sect h2 { font-size:clamp(1.9rem,4.4vw,3.2rem); font-weight:900; line-height:1.02; letter-spacing:-0.02em; }
+  .sect .kick.o { color:var(--orange); }
+  .sect .kick.g { color:var(--green-soft); }
+  .sect h1 { font-size:clamp(2.6rem,7vw,4.6rem); font-weight:900; line-height:0.98; letter-spacing:-0.03em; }
+  .sect h2 { font-size:clamp(1.8rem,4vw,2.9rem); font-weight:900; line-height:1.02; letter-spacing:-0.02em; }
   .sect h1 .o, .sect h2 .o { color:var(--orange); }
   .sect h1 .v, .sect h2 .v { color:var(--violet-soft); }
   .sect h1 .g, .sect h2 .g { color:var(--green-soft); }
-  .sect p { margin-top:1.1rem; color:var(--ink-dim); font-size:clamp(0.92rem,1.4vw,1.05rem); line-height:1.65; font-weight:400; }
-  .sect p b { color:var(--ink); }
-  .sect .num { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; color:var(--ink-dim); margin-top:1.4rem; }
+  .sect p.lead { margin-top:1rem; color:var(--ink-dim); font-size:clamp(0.9rem,1.3vw,1rem); line-height:1.6; }
+  .sect p.lead b { color:var(--ink); }
+
+  /* expandable mini sections */
+  .chips { margin-top:1.4rem; display:flex; flex-direction:column; gap:0.55rem; }
+  .chip {
+    border:1px solid var(--line); border-radius:10px;
+    background:rgba(17,13,34,0.72); backdrop-filter:blur(10px);
+    overflow:hidden; transition:border-color .3s;
+  }
+  .chip-h {
+    width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    background:none; border:none; cursor:pointer; color:var(--ink);
+    font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase;
+    padding:0.95rem 1.15rem; text-align:left;
+  }
+  .chip-h .pm { color:var(--violet-soft); font-size:0.95rem; transition:transform .25s; flex:0 0 auto; }
+  .chip-b { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .chip-b p { padding:0 1.15rem 1rem; color:var(--ink-dim); font-size:0.85rem; line-height:1.6; font-family:var(--body); text-transform:none; letter-spacing:0; }
+  .chip-b p b { color:var(--ink); }
+  .chip.open .chip-b { max-height:220px; }
+  .chip.open .pm { transform:rotate(45deg); }
+  .chip.cv { border-left:3px solid var(--violet); }    .chip.cv.open { border-color:var(--violet); }
+  .chip.co { border-left:3px solid var(--orange); }    .chip.co.open { border-color:var(--orange); }
+  .chip.cg { border-left:3px solid var(--green); }     .chip.cg.open { border-color:var(--green); }
+
   .scrollhint { position:fixed; bottom:3.4vh; left:50%; transform:translateX(-50%); z-index:10; font-family:var(--mono); font-size:0.6rem; letter-spacing:0.25em; color:var(--ink-dim); text-transform:uppercase; animation:hintbob 2s ease-in-out infinite; }
   @keyframes hintbob { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,8px)} }
 
@@ -69,12 +95,11 @@
   #loader { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.2rem; transition:opacity .9s; }
   #loader.off { opacity:0; pointer-events:none; }
   #loader img { width:90px; height:90px; animation:lpulse 1.6s ease-in-out infinite; }
-  @keyframes lpulse { 0%,100%{transform:scale(1); filter:drop-shadow(0 0 18px rgba(138,75,208,0.5))} 50%{transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(255,145,77,0.6))} }
+  @keyframes lpulse { 0%,100%{transform:scale(1); filter:drop-shadow(0 0 18px rgba(138,75,208,0.5))} 50%{transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(176,138,224,0.6))} }
   #loader .lt { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--ink-dim); }
   #lbar { width:180px; height:2px; background:rgba(244,241,234,0.12); border-radius:2px; overflow:hidden; }
   #lbar div { height:100%; width:0%; background:linear-gradient(90deg,var(--violet),var(--orange)); transition:width .3s; }
 
-  /* nav arrows */
   #navarrows { position:fixed; right:1.1rem; bottom:1.4rem; z-index:25; display:flex; flex-direction:column; gap:0.55rem; }
   .navbtn {
     width:46px; height:46px; border-radius:50%;
@@ -88,19 +113,18 @@
   .navbtn.dim { opacity:0.3; pointer-events:none; }
   #begin {
     margin-top:1.6rem; pointer-events:auto; cursor:pointer;
-    font-family:var(--mono); font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase;
-    color:var(--ink); background:rgba(255,145,77,0.12); border:1px solid var(--orange);
-    padding:0.95rem 1.7rem; border-radius:8px; transition:all .25s;
+    font-family:var(--mono); font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--ink); background:rgba(138,75,208,0.14); border:1px solid var(--violet-soft);
+    padding:1rem 1.9rem; border-radius:8px; transition:all .25s;
   }
-  #begin:hover { background:rgba(255,145,77,0.25); box-shadow:0 0 26px rgba(255,145,77,0.4); }
+  #begin:hover { background:rgba(138,75,208,0.3); box-shadow:0 0 26px rgba(138,75,208,0.45); }
   body.dragging { cursor:grabbing; }
 
   @media (max-width:700px) {
     .sect { left:6vw; right:6vw; max-width:none; }
-    .sect.right { text-align:left; }
     .sect h1 { font-size:clamp(2.1rem,9vw,3rem); }
-    .sect h2 { font-size:clamp(1.7rem,7vw,2.4rem); }
-    .sect p { font-size:0.92rem; }
+    .sect h2 { font-size:clamp(1.6rem,6.6vw,2.2rem); }
+    .chip-h { font-size:0.66rem; padding:0.85rem 0.95rem; }
     #rail { display:none; }
     #bar { padding:0.8rem 1rem; }
     #bar .t span { display:none; }
@@ -132,51 +156,84 @@
   <button class="navbtn" id="nextBtn" aria-label="Next section">↓</button>
 </div>
 
+<!-- MAIN -->
 <div class="sect center" data-i="0">
   <div class="kick">Myanmar Creative Technology College · Est. 2017</div>
-  <h1>A college that<br/>works like a <span class="o">living<br/>system</span>.</h1>
-  <p><b>515 students · 21 programs · Pearson UK Centre No. 92672.</b><br/>Scroll, drag, or tap the arrows to fly through it.</p>
-  <button id="begin">Begin the flight ↓</button>
+  <h1>A college that<br/>works like a <span class="v">living<br/>system</span>.</h1>
+  <button id="begin">Click to enter ↓</button>
 </div>
 
+<!-- 1st · PURPLE FIRE -->
 <div class="sect" data-i="1">
-  <div class="kick">The Core · Flame of Passion</div>
-  <h2>Everything orbits<br/>the <span class="v">flame</span>.</h2>
-  <p>Inspiration. Intuition. Innovation. The culture at the center of MCTC isn't a slogan — it's the gravity that holds the whole system together. <b>If you love something, make it your career.</b></p>
-  <div class="num">CORE · 00</div>
+  <div class="kick">1st · The Purple Fire</div>
+  <h2>What is a<br/><span class="v">living system</span>?</h2>
+  <p class="lead">Not a pipeline — an ecosystem with a flame at its core.</p>
+  <div class="chips">
+    <div class="chip cv">
+      <button class="chip-h">The Creative Flame of Passion <span class="pm">+</span></button>
+      <div class="chip-b"><p><b>If you love something, make it your career.</b> Inspiration, intuition and innovation aren't slogans here — they're the gravity that holds every part of MCTC in orbit.</p></div>
+    </div>
+    <div class="chip cv">
+      <button class="chip-h">Keep on Thriving <span class="pm">+</span></button>
+      <div class="chip-b"><p>The system sustains itself: students train, get placed, and return to lift the next batch. <b>No goodbye on graduation day</b> — only a different role in the same family.</p></div>
+    </div>
+    <div class="chip cv">
+      <button class="chip-h">Group Activities · Events <span class="pm">+</span></button>
+      <div class="chip-b"><p>Public deadlines make the work real — the <b>Creative Technology Event at Junction City</b> has run every year since 2017, alongside HOGCON, festivals and brand collabs.</p></div>
+    </div>
+  </div>
 </div>
 
+<!-- 2nd · ORANGE FIRE · TRAIN -->
 <div class="sect right" data-i="2">
-  <div class="kick">Branch A · Train</div>
-  <h2>Theory, tested<br/>by <span class="v">deadline</span>.</h2>
-  <p>Pearson UK BTEC from Level 3 to HND — but every student enters <b>real production before graduation</b>. Client briefs from Ooredoo, Nestlé, MSI. Public exhibitions at Junction City since 2017. Mistakes corrected by mentors, not punished by exams.</p>
-  <div class="num">A.1 LEARN · A.2 OJT · A.3 EVENTS · A.4 COALITIONS</div>
+  <div class="kick o">2nd · The Orange Fire — Train</div>
+  <h2>Theory, tested<br/>by <span class="o">deadline</span>.</h2>
+  <p class="lead">Study and practical work, fused into one track.</p>
+  <div class="chips">
+    <div class="chip co">
+      <button class="chip-h">UK Pearson Connection · Real Diploma <span class="pm">+</span></button>
+      <div class="chip-b"><p>MCTC is <b>Pearson UK BTEC Centre No. 92672</b> — your diploma is a real UK credential, from Level 3 Foundation up to HND (Level 5), with a Top-up Bachelor pathway in development.</p></div>
+    </div>
+    <div class="chip co">
+      <button class="chip-h">UK Curriculum <span class="pm">+</span></button>
+      <div class="chip-b"><p>BTEC framework with real production embedded inside it — <b>120 CATS credits at HND</b>, 240 on the full bachelor pathway, aligned to global standards.</p></div>
+    </div>
+    <div class="chip co">
+      <button class="chip-h">Industrial Lecturers <span class="pm">+</span></button>
+      <div class="chip-b"><p>Mentors who ship real work — client briefs from <b>Ooredoo, Nestlé and MSI</b> run inside the classroom, and mistakes are corrected in production, not punished by exams.</p></div>
+    </div>
+  </div>
 </div>
 
+<!-- 3rd · GREEN FIRE · PLACE -->
 <div class="sect" data-i="3">
-  <div class="kick">The Proof · Student Work</div>
-  <h2>Made by hands<br/>we <span class="g">trained</span>.</h2>
-  <p>Chibi, anime, comics, mech, doodle art — real pieces by real students orbit you right now. Moe Phyu Sin Thant, Khaing Yi Mon, Saung Akyinnar, Hein Zay Yar Htoo, Nang Hlaing Kham Hoom, Soe Maung Maung Lwin.</p>
-  <div class="num">DIGITAL ART SHOWCASE → <a href="../showcase/" style="color:var(--green-soft); pointer-events:auto;">ENTER</a></div>
-</div>
-
-<div class="sect right" data-i="4">
-  <div class="kick">Branch B · Place</div>
+  <div class="kick g">3rd · The Green Fire — Place</div>
   <h2>No certificate-<br/>and-<span class="g">goodbye</span>.</h2>
-  <p>Every graduate is routed: <b>Lecturers</b> — alumni become faculty. <b>In-House Studio</b> — commercial teams shipping for Nestlé, MSI, Wacom, Bandai, NVIDIA. <b>Partner Businesses</b> — placed directly into the coalition network.</p>
-  <div class="num">B.1 · B.2 · B.3 — 100% ROUTED</div>
+  <p class="lead">Every graduate is routed somewhere real.</p>
+  <div class="chips">
+    <div class="chip cg">
+      <button class="chip-h">Portfolio <span class="pm">+</span></button>
+      <div class="chip-b"><p>You graduate with <b>shipped work, not just grades</b> — exhibition pieces, client projects and a public showcase that art directors actually look at.</p></div>
+    </div>
+    <div class="chip cg">
+      <button class="chip-h">Studio <span class="pm">+</span></button>
+      <div class="chip-b"><p>The in-house studio takes commercial work — <b>EDM visuals, AR filters, game art</b> for Nestlé, MSI, Wacom, Bandai, NVIDIA. Earn while you teach, teach while you earn.</p></div>
+    </div>
+    <div class="chip cg">
+      <button class="chip-h">In-house Placement <span class="pm">+</span></button>
+      <div class="chip-b"><p>The coalition network places graduates <b>directly into studios, agencies and ateliers</b> — and mentorship doesn't end at the door.</p></div>
+    </div>
+    <div class="chip cg">
+      <button class="chip-h">Teaching back in MCTC <span class="pm">+</span></button>
+      <div class="chip-b"><p><b>75% of current faculty walked in as students first.</b> The strongest graduates are invited back to teach — the loop that keeps the system alive.</p></div>
+    </div>
+  </div>
 </div>
 
-<div class="sect" data-i="5">
-  <div class="kick">The Return</div>
-  <h2><span class="o">75%</span> of faculty<br/>walked in as<br/>students first.</h2>
-  <p>Placed graduates return as lecturers. Lecturers mentor the next batch. The loop closes — and the system sustains itself. <b>No goodbye on graduation day, only a different role in the same family.</b></p>
-  <div class="num">THE LOOP · SELF-SUSTAINING</div>
-</div>
-
-<div class="sect center" data-i="6">
+<!-- FINALE -->
+<div class="sect center" data-i="4">
   <div class="kick">Your turn</div>
-  <h2>Step into<br/>the <span class="o">system</span>.</h2>
+  <h2>Step into<br/>the <span class="v">system</span>.</h2>
   <div class="ctas">
     <a class="cta hot" href="../showcase/">See student art</a>
     <a class="cta" href="../?classic">Explore the classic site</a>
@@ -199,32 +256,37 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0a0816);
-scene.fog = new THREE.FogExp2(0x0a0816, 0.018);
+scene.fog = new THREE.FogExp2(0x0a0816, 0.016);
 const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 400);
 
 const PAL = { violet:0x8a4bd0, violetSoft:0xb08ae0, deep:0x5f2b8e, orange:0xff914d, green:0x00bf63, white:0xe8e4f4 };
 
-/* ============ NODE CONSTELLATION ============ */
+/* hue shifts from the native PURPLE flame */
+const HUE = { purple:0.0, orange:1.92, green:-2.45 };
+
+/* ============ CONSTELLATION DATA ============ */
 function v3(mx, my, z) { return new THREE.Vector3((mx-800)/55, -(my-450)/55, z); }
 const ND = {
-  mctc:      { p: v3(900,450, 0),    c: PAL.violet, r: 1.15 },
-  train:     { p: v3(560,250,-2.0),  c: PAL.violet, r: 0.72 },
-  learn:     { p: v3(340,120,-4.5),  c: PAL.violet, r: 0.45 },
-  ojt:       { p: v3(460,480, 1.6),  c: PAL.violet, r: 0.45 },
-  events:    { p: v3(260,630,-1.2),  c: PAL.violet, r: 0.36 },
-  coalitions:{ p: v3(580,730, 2.4),  c: PAL.violet, r: 0.36 },
-  place:     { p: v3(1300,250,-2.0), c: PAL.green,  r: 0.72 },
-  lecturers: { p: v3(1500,130,-4.5), c: PAL.green,  r: 0.45 },
-  studio:    { p: v3(1500,450, 1.6), c: PAL.green,  r: 0.45 },
-  partners:  { p: v3(1440,720,-1.2), c: PAL.green,  r: 0.45 },
-  loop:      { p: v3(900,780, 1.0),  c: PAL.white,  r: 0.55 },
+  mctc:      { p: v3(900,450, 0),    c: PAL.violet, hue:HUE.purple, big:true,  size:4.4,  label:'THE CORE',         title:'MCTC' },
+  train:     { p: v3(560,250,-2.0),  c: PAL.orange, hue:HUE.orange, big:true,  size:2.7,  label:'2ND FIRE',         title:'Train' },
+  learn:     { p: v3(340,120,-4.5),  c: PAL.orange, hue:HUE.orange, size:1.0,  label:'A.1 · LEARN',      title:'Learn' },
+  ojt:       { p: v3(460,480, 1.6),  c: PAL.orange, hue:HUE.orange, size:1.0,  label:'A.2 · OJT',        title:'On-Job Training' },
+  events:    { p: v3(260,630,-1.2),  c: PAL.violet, hue:HUE.purple, size:0.85, label:'A.3 · EVENTS',     title:'Events' },
+  coalitions:{ p: v3(580,730, 2.4),  c: PAL.orange, hue:HUE.orange, size:0.85, label:'A.4 · COALITIONS', title:'Coalitions' },
+  place:     { p: v3(1300,250,-2.0), c: PAL.green,  hue:HUE.green,  big:true,  size:2.7,  label:'3RD FIRE',         title:'Place' },
+  lecturers: { p: v3(1500,130,-4.5), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.1 · LECTURERS',  title:'Lecturers' },
+  studio:    { p: v3(1500,450, 1.6), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.2 · STUDIO',     title:'In-House Studio' },
+  partners:  { p: v3(1440,720,-1.2), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.3 · PARTNERS',   title:'Partner Businesses' },
+  loop:      { p: v3(900,780, 1.0),  c: PAL.violetSoft, hue:HUE.purple, size:1.2, label:'THE RETURN',    title:'The Loop' },
 };
 const LINKS = [
-  ['mctc','train'],['train','learn'],['train','ojt'],['ojt','events'],['events','coalitions'],
-  ['mctc','place'],['place','lecturers'],['place','studio'],['place','partners'],
-  ['coalitions','loop'],['partners','loop'],['loop','mctc']
+  ['mctc','train'], ['train','learn'], ['train','ojt'], ['ojt','events'],
+  ['events','coalitions'], ['mctc','place'], ['place','lecturers'],
+  ['place','studio'], ['place','partners'], ['coalitions','loop'],
+  ['partners','loop'], ['loop','mctc']
 ];
 
+/* glow sprite texture */
 function glowTex() {
   const cv = document.createElement('canvas'); cv.width = cv.height = 128;
   const g = cv.getContext('2d');
@@ -237,50 +299,23 @@ function glowTex() {
 }
 const GLOW = glowTex();
 
-const nodeGroup = new THREE.Group(); scene.add(nodeGroup);
-for (const id in ND) {
-  const n = ND[id];
-  if (id !== 'mctc' && id !== 'train' && id !== 'place') {
-    const m = new THREE.Mesh(
-      new THREE.SphereGeometry(n.r, 24, 24),
-      new THREE.MeshBasicMaterial({ color: n.c })
-    );
-    m.position.copy(n.p);
-    nodeGroup.add(m);
-  }
-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: GLOW, color: n.c, transparent: true, opacity: 0.85,
-    blending: THREE.AdditiveBlending, depthWrite: false
-  }));
-  sp.scale.setScalar(n.r * 7);
-  sp.position.copy(n.p);
-  nodeGroup.add(sp);
-  n.sprite = sp;
-}
-const lineMat = new THREE.LineBasicMaterial({ color: PAL.violet, transparent:true, opacity:0.32, blending:THREE.AdditiveBlending });
-LINKS.forEach(([a,b]) => {
-  const g = new THREE.BufferGeometry().setFromPoints([ND[a].p, ND[b].p]);
-  nodeGroup.add(new THREE.Line(g, lineMat));
-});
-
-/* ============ THE BRAND FLAME (green-screen video, chroma-keyed) ============ */
+/* ============ FLAME VIDEO (packed alpha: color | matte) ============ */
 const flameVid = document.createElement('video');
-flameVid.src = 'flame.mp4';
+flameVid.src = 'flame_packed.mp4';
 flameVid.loop = true; flameVid.muted = true; flameVid.playsInline = true;
-flameVid.setAttribute('playsinline', '');
-flameVid.setAttribute('muted', '');
+flameVid.setAttribute('playsinline',''); flameVid.setAttribute('muted','');
 flameVid.crossOrigin = 'anonymous';
 flameVid.play().catch(function(){});
 ['pointerdown','touchstart','keydown','wheel'].forEach(function(ev){
-  addEventListener(ev, function(){ flameVid.play().catch(function(){}); }, { once: true, passive: true });
+  addEventListener(ev, function(){ flameVid.play().catch(function(){}); }, { once:true, passive:true });
 });
 const vidTex = new THREE.VideoTexture(flameVid);
 vidTex.minFilter = THREE.LinearFilter;
 vidTex.magFilter = THREE.LinearFilter;
-const flameBase = ND.mctc.p.clone();
-function hueKeyMaterial(hueRad) {
+
+function flameMaterial(hueRad) {
   return new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0 }, uTex: { value: vidTex }, uHue: { value: hueRad } },
+    uniforms: { uTex: { value: vidTex }, uHue: { value: hueRad } },
     transparent: true, depthWrite: false, side: THREE.DoubleSide,
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: `
@@ -293,38 +328,86 @@ function hueKeyMaterial(hueRad) {
         return color*c + cross(k, color)*s + k*dot(k, color)*(1.0-c);
       }
       void main(){
-        vec4 c = texture2D(uTex, vUv);
-        float spill = c.g - max(c.r, c.b);
-        float a = 1.0 - smoothstep(0.03, 0.16, spill);
-        c.g = min(c.g, max(c.r, c.b) * 1.08);
-        if (a < 0.03) discard;
-        vec3 col = (abs(uHue) < 0.001) ? c.rgb : clamp(hueShift(c.rgb, uHue), 0.0, 1.0);
-        gl_FragColor = vec4(col * 1.12, a);
+        vec2 cuv = vec2(vUv.x * 0.5, vUv.y);
+        vec2 auv = vec2(vUv.x * 0.5 + 0.5, vUv.y);
+        vec3 col = texture2D(uTex, cuv).rgb;
+        float a = texture2D(uTex, auv).r;
+        if (a < 0.02) discard;
+        if (abs(uHue) > 0.001) col = clamp(hueShift(col, uHue), 0.0, 1.0);
+        gl_FragColor = vec4(col * 1.08, a);
       }
     `
   });
 }
+
+/* ============ BUILD SCENE: flames as nodes, sparks as satellites ============ */
+const nodeGroup = new THREE.Group(); scene.add(nodeGroup);
+const lineMat = new THREE.LineBasicMaterial({ color: PAL.violet, transparent:true, opacity:0.3, blending:THREE.AdditiveBlending });
+LINKS.forEach(function(pair){
+  const g = new THREE.BufferGeometry().setFromPoints([ND[pair[0]].p, ND[pair[1]].p]);
+  nodeGroup.add(new THREE.Line(g, lineMat));
+});
+
 const FLAMES = [];
-function addFlame(size, basePos, yOff, hueRad) {
-  const m = hueKeyMaterial(hueRad);
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(size, size), m);
-  mesh.position.copy(basePos).add(new THREE.Vector3(0, yOff, 0));
-  mesh.visible = false; /* hidden until real video frames exist (avoids a black square) */
-  scene.add(mesh);
-  FLAMES.push({ mesh: mesh, mat: m });
-  return mesh;
+for (const id in ND) {
+  const n = ND[id];
+  /* every node is a flame — big fires for mctc/train/place, small sparks for satellites */
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(n.size, n.size), flameMaterial(n.hue));
+  m.position.copy(n.p).add(new THREE.Vector3(0, n.size*0.32, 0));
+  m.visible = false;
+  scene.add(m);
+  FLAMES.push({ mesh:m, phase: Math.random()*6.28, base: n.size });
+  /* soft halo */
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: GLOW, color: n.c, transparent: true, opacity: n.big ? 0.5 : 0.32,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  sp.scale.setScalar(n.size * (n.big ? 2.4 : 2.0));
+  sp.position.copy(n.p).add(new THREE.Vector3(0, n.size*0.25, 0));
+  scene.add(sp);
+  n.sprite = sp;
+  /* labels */
+  if (!n.big || id==='mctc') {} /* labels drawn for all below */
 }
-const flameA = addFlame(4.2, flameBase, 1.35, 0.0);   /* brand purple — MCTC core */
-addFlame(2.3, ND.train.p, 0.62, 1.83);                /* orange — Train branch */
-addFlame(2.3, ND.place.p, 0.62, -2.62);               /* green — Place branch */
 flameVid.addEventListener('playing', function(){ FLAMES.forEach(function(f){ f.mesh.visible = true; }); });
-const flameMatA = FLAMES[0].mat;
-const flameMatB = flameMatA, flameB = flameA;
-/* rising embers */
+
+/* text labels via canvas sprites */
+function labelSprite(text, sub, color) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128;
+  const g = cv.getContext('2d');
+  g.textAlign = 'center';
+  g.font = 'italic 600 38px Montserrat, sans-serif';
+  g.fillStyle = '#f4f1ea';
+  g.fillText(text, 256, 52);
+  g.font = '500 17px JetBrains Mono, monospace';
+  g.fillStyle = color;
+  g.fillText(sub, 256, 92);
+  const t = new THREE.CanvasTexture(cv);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map:t, transparent:true, depthWrite:false }));
+  s.scale.set(4.6, 1.15, 1);
+  return s;
+}
+const labelColors = {};
+labelColors[PAL.violet]='#b08ae0'; labelColors[PAL.orange]='#ffb586'; labelColors[PAL.green]='#35d98b'; labelColors[PAL.violetSoft]='#b08ae0';
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function(){
+  for (const id in ND) {
+    const n = ND[id];
+    const ls = labelSprite(n.title, n.label, labelColors[n.c] || '#b08ae0');
+    ls.position.copy(n.p).add(new THREE.Vector3(0, -(n.size*0.45 + 0.55), 0));
+    scene.add(ls);
+  }
+});
+
+/* core glow + embers */
+const coreGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map:GLOW, color:PAL.violet, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending, depthWrite:false }));
+coreGlow.scale.setScalar(11);
+coreGlow.position.copy(ND.mctc.p).add(new THREE.Vector3(0, 1.0, 0));
+scene.add(coreGlow);
 const EMB = 70;
 const embGeo = new THREE.BufferGeometry();
 const embPos = new Float32Array(EMB*3);
 const embDat = [];
+const flameBase = ND.mctc.p.clone();
 for (let i=0;i<EMB;i++) {
   const a = Math.random()*Math.PI*2, r = Math.random()*0.9;
   embDat.push({ x: flameBase.x + Math.cos(a)*r, z: flameBase.z + Math.sin(a)*r*0.4,
@@ -333,16 +416,10 @@ for (let i=0;i<EMB;i++) {
 }
 embGeo.setAttribute('position', new THREE.BufferAttribute(embPos, 3));
 const embers = new THREE.Points(embGeo, new THREE.PointsMaterial({
-  size: 0.12, color: 0xa974ff, map: GLOW, transparent: true, opacity: 0.9,
+  size: 0.12, color: 0xb08ae0, map: GLOW, transparent: true, opacity: 0.9,
   blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
 }));
 scene.add(embers);
-/* legacy uniform shim (kept so older refs never break) */
-const flameUniforms = flameMatA.uniforms;
-const coreGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map:GLOW, color:PAL.violet, transparent:true, opacity:0.55, blending:THREE.AdditiveBlending, depthWrite:false }));
-coreGlow.scale.setScalar(10);
-coreGlow.position.copy(flameBase).add(new THREE.Vector3(0, 0.8, 0));
-scene.add(coreGlow);
 
 /* ============ PARTICLES ============ */
 const PCOUNT = innerWidth < 700 ? 2600 : 6500;
@@ -374,8 +451,8 @@ ring.position.copy(ringCenter);
 scene.add(ring);
 const loadMgr = new THREE.LoadingManager();
 const texLoader = new THREE.TextureLoader(loadMgr);
-ARTS.forEach((name, i) => {
-  texLoader.load('../images/' + name + '.jpg', tex => {
+ARTS.forEach(function(name, i){
+  texLoader.load('../images/' + name + '.jpg', function(tex){
     tex.encoding = THREE.sRGBEncoding;
     const ar = tex.image.width / tex.image.height;
     const h = 2.1, w = h * ar;
@@ -400,20 +477,18 @@ ARTS.forEach((name, i) => {
 
 /* ============ LOADER ============ */
 const lFill = document.querySelector('#lbar div');
-loadMgr.onProgress = (u, l, t) => { lFill.style.width = Math.round(l/t*100) + '%'; };
+loadMgr.onProgress = function(u, l, t){ lFill.style.width = Math.round(l/t*100) + '%'; };
 let bootT = setTimeout(hideLoader, 4000);
-loadMgr.onLoad = () => { clearTimeout(bootT); hideLoader(); };
+loadMgr.onLoad = function(){ clearTimeout(bootT); hideLoader(); };
 function hideLoader(){ lFill.style.width='100%'; document.getElementById('loader').classList.add('off'); }
 
-/* ============ CAMERA PATH ============ */
+/* ============ CAMERA PATH (5 stops) ============ */
 const KEY = [
-  { p: 0.00, pos: new THREE.Vector3(0, 1.5, 30),   look: ND.mctc.p },
-  { p: 0.16, pos: new THREE.Vector3(2.6, 1.3, 7.2), look: ND.mctc.p.clone().add(new THREE.Vector3(0, 1.2, 0)) },
-  { p: 0.33, pos: ND.train.p.clone().add(new THREE.Vector3(2.5, 0.4, 7)), look: ND.train.p.clone().add(new THREE.Vector3(-2,-0.5,-2)) },
-  { p: 0.50, pos: ringCenter.clone().add(new THREE.Vector3(0, 0.3, 0.4)), look: ringCenter.clone().add(new THREE.Vector3(2.4, 0, 0)) },
-  { p: 0.66, pos: ND.place.p.clone().add(new THREE.Vector3(-3, 1.2, 8)), look: ND.place.p },
-  { p: 0.83, pos: ND.loop.p.clone().add(new THREE.Vector3(0, -1.5, 9)),  look: ND.loop.p },
-  { p: 1.00, pos: new THREE.Vector3(0, 4, 36),   look: ND.mctc.p },
+  { p: 0.00, pos: new THREE.Vector3(0, 1.5, 30),  look: ND.mctc.p },
+  { p: 0.25, pos: new THREE.Vector3(3.2, 1.6, 8.0), look: ND.mctc.p.clone().add(new THREE.Vector3(-0.6, 1.3, 0)) },
+  { p: 0.50, pos: ND.train.p.clone().add(new THREE.Vector3(-3.2, 1.0, 7.5)), look: ND.train.p.clone().add(new THREE.Vector3(0.8, 0.8, 0)) },
+  { p: 0.75, pos: ND.place.p.clone().add(new THREE.Vector3(3.2, 1.2, 7.5)),  look: ND.place.p.clone().add(new THREE.Vector3(-0.8, 0.8, 0)) },
+  { p: 1.00, pos: new THREE.Vector3(0, 4, 34),   look: ND.mctc.p },
 ];
 function smooth(t){ return t*t*(3-2*t); }
 function camAt(prog) {
@@ -426,21 +501,21 @@ function camAt(prog) {
 
 /* sections + rail */
 const sects = [...document.querySelectorAll('.sect')];
-const sectCenters = [0.0, 0.16, 0.33, 0.50, 0.66, 0.83, 1.0];
+const sectCenters = [0.0, 0.25, 0.50, 0.75, 1.0];
 const rail = document.getElementById('rail');
 function maxScroll(){ return document.body.scrollHeight - innerHeight; }
-sectCenters.forEach((c,i) => {
+sectCenters.forEach(function(c,i){
   const d = document.createElement('div');
   d.className = 'dot';
-  d.onclick = () => goTo(i);
+  d.onclick = function(){ goTo(i); };
   rail.appendChild(d);
 });
 
-/* ============ NAVIGATION (click / touch / keys / drag) ============ */
+/* ============ NAVIGATION ============ */
 let scrollP = 0, smoothP = 0;
 function curSection() {
   let best = 0, bd = 1e9;
-  sectCenters.forEach((c,i) => { const d = Math.abs(scrollP - c); if (d < bd) { bd = d; best = i; } });
+  sectCenters.forEach(function(c,i){ const d = Math.abs(scrollP - c); if (d < bd) { bd = d; best = i; } });
   return best;
 }
 let glideId = 0;
@@ -459,34 +534,33 @@ function goTo(i) {
     if (k < 1) requestAnimationFrame(glide);
   })(start);
 }
-/* wheel/touch input cancels an active glide */
-addEventListener('wheel', () => { glideId++; }, { passive:true });
-addEventListener('touchstart', () => { glideId++; }, { passive:true });
-document.getElementById('nextBtn').onclick = () => goTo(curSection()+1);
-document.getElementById('prevBtn').onclick = () => goTo(curSection()-1);
-document.getElementById('begin').onclick = () => goTo(1);
-addEventListener('keydown', e => {
+addEventListener('wheel', function(){ glideId++; }, { passive:true });
+addEventListener('touchstart', function(){ glideId++; }, { passive:true });
+document.getElementById('nextBtn').onclick = function(){ goTo(curSection()+1); };
+document.getElementById('prevBtn').onclick = function(){ goTo(curSection()-1); };
+document.getElementById('begin').onclick = function(){ goTo(1); };
+addEventListener('keydown', function(e){
   if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); goTo(curSection()+1); }
   if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); goTo(curSection()-1); }
   if (e.key === 'Home') { e.preventDefault(); goTo(0); }
   if (e.key === 'End') { e.preventDefault(); goTo(sectCenters.length-1); }
 });
-/* mouse drag-to-fly (touch devices scroll natively) */
+/* mouse drag-to-fly */
 let dragY = null, dragMoved = 0;
-addEventListener('pointerdown', e => {
+addEventListener('pointerdown', function(e){
   if (e.pointerType !== 'mouse' || e.button !== 0) return;
-  if (e.target.closest('a, button, #rail, #bar')) return;
+  if (e.target.closest('a, button, #rail, #bar, .chip')) return;
   dragY = e.clientY; dragMoved = 0;
   document.body.classList.add('dragging');
 });
-addEventListener('pointermove', e => {
+addEventListener('pointermove', function(e){
   if (dragY === null) return;
   const dy = e.clientY - dragY;
   dragY = e.clientY;
   dragMoved += Math.abs(dy);
   window.scrollBy(0, -dy * 2.4);
 });
-addEventListener('pointerup', e => {
+addEventListener('pointerup', function(e){
   if (dragY === null) return;
   document.body.classList.remove('dragging');
   const wasDrag = dragMoved > 8;
@@ -496,14 +570,25 @@ addEventListener('pointerup', e => {
   }
 });
 
+/* expandable chips: one open per group */
+document.querySelectorAll('.chip-h').forEach(function(h){
+  h.addEventListener('click', function(){
+    const chip = h.parentElement;
+    const group = chip.parentElement;
+    const wasOpen = chip.classList.contains('open');
+    group.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('open'); });
+    if (!wasOpen) chip.classList.add('open');
+  });
+});
+
 /* ============ MAIN LOOP ============ */
 let mouseX = 0, mouseY = 0;
-addEventListener('mousemove', e => {
+addEventListener('mousemove', function(e){
   mouseX = (e.clientX/innerWidth - 0.5);
   mouseY = (e.clientY/innerHeight - 0.5);
 });
-addEventListener('scroll', () => { scrollP = window.scrollY / maxScroll(); }, { passive:true });
-addEventListener('resize', () => {
+addEventListener('scroll', function(){ scrollP = window.scrollY / maxScroll(); }, { passive:true });
+addEventListener('resize', function(){
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
@@ -514,8 +599,6 @@ function tick() {
   const t = clock.getElapsedTime();
   smoothP += (scrollP - smoothP) * 0.06;
   const cam = camAt(Math.min(1, Math.max(0, smoothP)));
-  /* portrait dolly: on tall/narrow screens, pull camera back along its view ray
-     so the wide constellation isn't cropped on the sides */
   const aspect = innerWidth / innerHeight;
   const dolly = aspect < 1 ? (1 + (1/Math.max(aspect,0.45) - 1) * 0.85) : 1;
   const pos = cam.look.clone().add(cam.pos.clone().sub(cam.look).multiplyScalar(dolly));
@@ -525,8 +608,9 @@ function tick() {
   camera.lookAt(cam.look);
 
   FLAMES.forEach(function(f){
-    f.mat.uniforms.uTime.value = t;
     f.mesh.quaternion.copy(camera.quaternion);
+    const s = 1 + Math.sin(t*2.0 + f.phase) * 0.04;
+    f.mesh.scale.set(s, s, 1);
   });
   for (let ei=0; ei<EMB; ei++) {
     const d = embDat[ei];
@@ -538,24 +622,27 @@ function tick() {
   }
   embGeo.attributes.position.needsUpdate = true;
   embers.material.opacity = 0.55 + Math.sin(t*2.0)*0.2;
-  coreGlow.material.opacity = 0.42 + Math.sin(t*2.2)*0.12;
-  points.rotation.y = t * 0.01;
-  ring.rotation.y = t * 0.12;
+  coreGlow.material.opacity = 0.4 + Math.sin(t*2.2)*0.1;
   let gi = 0;
   for (const id in ND) {
     const n = ND[id];
-    if (n.sprite) n.sprite.scale.setScalar(n.r * (6.4 + Math.sin(t*1.8 + gi)*0.9));
+    if (n.sprite) {
+      const base = n.size * (n.big ? 2.4 : 2.0);
+      n.sprite.scale.setScalar(base * (1 + Math.sin(t*1.8 + gi)*0.08));
+    }
     gi++;
   }
-  sects.forEach(s => {
+  points.rotation.y = t * 0.01;
+  ring.rotation.y = t * 0.12;
+  sects.forEach(function(s){
     const i = +s.dataset.i;
     const dist = Math.abs(smoothP - sectCenters[i]);
-    const o = Math.max(0, 1 - dist*9);
+    const o = Math.max(0, 1 - dist*7);
     s.style.opacity = o;
     s.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
   });
-  [...rail.children].forEach((d,i) => {
-    d.classList.toggle('on', Math.abs(smoothP - sectCenters[i]) < 0.085);
+  [...rail.children].forEach(function(d,i){
+    d.classList.toggle('on', Math.abs(smoothP - sectCenters[i]) < 0.12);
   });
   document.getElementById('hint').style.opacity = smoothP < 0.03 ? 1 : 0;
   document.getElementById('prevBtn').classList.toggle('dim', scrollP < 0.02);
