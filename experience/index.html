@@ -21,7 +21,7 @@
   html, body { height:100%; }
   body { background:var(--bg); color:var(--ink); font-family:var(--body); -webkit-font-smoothing:antialiased; }
   #c3d { position:fixed; inset:0; z-index:0; }
-  #spacer { height:560vh; }
+  #spacer { height:660vh; }
 
   #bar {
     position:fixed; top:0; left:0; right:0; z-index:20;
@@ -56,12 +56,12 @@
   .sect p.lead { margin-top:1rem; color:var(--ink-dim); font-size:clamp(0.9rem,1.3vw,1rem); line-height:1.6; }
   .sect p.lead b { color:var(--ink); }
 
-  /* expandable mini sections */
-  .chips { margin-top:1.4rem; display:flex; flex-direction:column; gap:0.55rem; }
+  /* expandable mini sections — presentation cards with glitch reveal */
+  .chips { margin-top:1.4rem; display:flex; flex-direction:column; gap:0.55rem; max-width:520px; }
   .chip {
     border:1px solid var(--line); border-radius:10px;
-    background:rgba(17,13,34,0.72); backdrop-filter:blur(10px);
-    overflow:hidden; transition:border-color .3s;
+    background:rgba(13,10,26,0.86); backdrop-filter:blur(12px);
+    overflow:hidden; transition:border-color .3s, box-shadow .3s;
   }
   .chip-h {
     width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem;
@@ -70,14 +70,63 @@
     padding:0.95rem 1.15rem; text-align:left;
   }
   .chip-h .pm { color:var(--violet-soft); font-size:0.95rem; transition:transform .25s; flex:0 0 auto; }
-  .chip-b { max-height:0; overflow:hidden; transition:max-height .35s ease; }
-  .chip-b p { padding:0 1.15rem 1rem; color:var(--ink-dim); font-size:0.85rem; line-height:1.6; font-family:var(--body); text-transform:none; letter-spacing:0; }
-  .chip-b p b { color:var(--ink); }
-  .chip.open .chip-b { max-height:220px; }
+  .chip-b { max-height:0; overflow:hidden; transition:max-height .4s ease; }
+  .cb-in { display:flex; gap:0.95rem; padding:0.15rem 1.15rem 1.1rem; align-items:flex-start; }
+  .cb-in img {
+    width:148px; aspect-ratio:4/3; object-fit:cover; flex:0 0 148px;
+    border-radius:8px; border:1px solid var(--line-strong, rgba(244,241,234,0.18));
+  }
+  .cb-in p { color:var(--ink-dim); font-size:0.85rem; line-height:1.6; font-family:var(--body); text-transform:none; letter-spacing:0; }
+  .cb-in p b { color:var(--ink); }
+  .chip.open .chip-b { max-height:300px; }
   .chip.open .pm { transform:rotate(45deg); }
-  .chip.cv { border-left:3px solid var(--violet); }    .chip.cv.open { border-color:var(--violet); }
-  .chip.co { border-left:3px solid var(--orange); }    .chip.co.open { border-color:var(--orange); }
-  .chip.cg { border-left:3px solid var(--green); }     .chip.cg.open { border-color:var(--green); }
+  .chip.open .cb-in { animation: chipglitch .5s linear; }
+  .chip.open .chip-h { animation: rgbsplit .45s linear; }
+  @keyframes chipglitch {
+    0%   { clip-path: inset(0 0 92% 0);  transform: translateX(-9px); filter: hue-rotate(70deg) saturate(2.2); opacity:.55; }
+    16%  { clip-path: inset(38% 0 38% 0); transform: translateX(7px); }
+    32%  { clip-path: inset(72% 0 5% 0);  transform: translateX(-5px); filter: hue-rotate(-50deg); }
+    48%  { clip-path: inset(6% 0 66% 0);  transform: translateX(4px); }
+    64%  { clip-path: inset(44% 0 22% 0); transform: translateX(-3px); filter:none; opacity:1; }
+    80%  { clip-path: inset(12% 0 8% 0);  transform: translateX(1px); }
+    100% { clip-path: inset(0 0 0 0);     transform: none; }
+  }
+  @keyframes rgbsplit {
+    0%, 55% { text-shadow: 2px 0 rgba(255,43,206,.65), -2px 0 rgba(31,227,232,.65); }
+    75%     { text-shadow: 1px 0 rgba(255,43,206,.3), -1px 0 rgba(31,227,232,.3); }
+    100%    { text-shadow: none; }
+  }
+  .chip.cv { border-left:3px solid var(--violet); }    .chip.cv.open { border-color:var(--violet); box-shadow:0 0 22px rgba(138,75,208,0.25); }
+  .chip.co { border-left:3px solid var(--orange); }    .chip.co.open { border-color:var(--orange); box-shadow:0 0 22px rgba(255,145,77,0.22); }
+  .chip.cg { border-left:3px solid var(--green); }     .chip.cg.open { border-color:var(--green); box-shadow:0 0 22px rgba(0,191,99,0.22); }
+  @media (max-width:700px) {
+    .cb-in { flex-direction:column; }
+    .cb-in img { width:100%; flex:none; }
+    .chip.open .chip-b { max-height:420px; }
+  }
+
+  /* Pearson credential + document buttons */
+  .cred {
+    margin-top:1.2rem; display:flex; align-items:center; gap:0.9rem;
+    border:1px solid rgba(255,145,77,0.45); border-radius:10px;
+    background:rgba(13,10,26,0.86); backdrop-filter:blur(12px);
+    padding:0.8rem 1.1rem; max-width:520px;
+  }
+  .cred img { height:26px; width:auto; opacity:0.95; }
+  .cred-t { display:flex; flex-direction:column; gap:2px; }
+  .cred-t b { font-size:0.85rem; letter-spacing:0.02em; }
+  .cred-t span { font-family:var(--mono); font-size:0.6rem; letter-spacing:0.22em; color:var(--orange); }
+  .docbtns { margin-top:0.7rem; display:flex; flex-wrap:wrap; gap:0.55rem; max-width:520px; }
+  .dbtn {
+    font-family:var(--mono); font-size:0.62rem; letter-spacing:0.13em; text-transform:uppercase;
+    color:var(--ink); text-decoration:none;
+    border:1px solid var(--orange); border-radius:7px;
+    padding:0.7rem 1rem; background:rgba(13,10,26,0.7); backdrop-filter:blur(8px);
+    transition:all .25s;
+  }
+  .dbtn:hover { background:rgba(255,145,77,0.18); box-shadow:0 0 18px rgba(255,145,77,0.3); }
+  .dbtn.ghost { border-color:var(--line); color:var(--ink-dim); }
+  .dbtn.ghost:hover { color:var(--ink); border-color:var(--orange); }
 
   .scrollhint { position:fixed; bottom:3.4vh; left:50%; transform:translateX(-50%); z-index:10; font-family:var(--mono); font-size:0.6rem; letter-spacing:0.25em; color:var(--ink-dim); text-transform:uppercase; animation:hintbob 2s ease-in-out infinite; }
   @keyframes hintbob { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,8px)} }
@@ -163,75 +212,94 @@
   <button id="begin">Click to enter ↓</button>
 </div>
 
-<!-- 1st · PURPLE FIRE -->
+<!-- PURPLE FIRE -->
 <div class="sect" data-i="1">
-  <div class="kick">1st · The Purple Fire</div>
+  <div class="kick">The Living System</div>
   <h2>What is a<br/><span class="v">living system</span>?</h2>
   <p class="lead">Not a pipeline — an ecosystem with a flame at its core.</p>
   <div class="chips">
     <div class="chip cv">
       <button class="chip-h">The Creative Flame of Passion <span class="pm">+</span></button>
-      <div class="chip-b"><p><b>If you love something, make it your career.</b> Inspiration, intuition and innovation aren't slogans here — they're the gravity that holds every part of MCTC in orbit.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/live_passion.jpg" alt="" loading="lazy" onerror="this.remove()" /><p><b>If you love something, make it your career.</b> Inspiration, intuition and innovation aren't slogans here — they're the gravity that holds every part of MCTC in orbit.</p></div></div>
     </div>
     <div class="chip cv">
       <button class="chip-h">Keep on Thriving <span class="pm">+</span></button>
-      <div class="chip-b"><p>The system sustains itself: students train, get placed, and return to lift the next batch. <b>No goodbye on graduation day</b> — only a different role in the same family.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/live_thriving.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>The system sustains itself: students train, get placed, and return to lift the next batch. <b>No goodbye on graduation day</b> — only a different role in the same family.</p></div></div>
     </div>
     <div class="chip cv">
       <button class="chip-h">Group Activities · Events <span class="pm">+</span></button>
-      <div class="chip-b"><p>Public deadlines make the work real — the <b>Creative Technology Event at Junction City</b> has run every year since 2017, alongside HOGCON, festivals and brand collabs.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/live_events.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>Public deadlines make the work real — the <b>Creative Technology Event at Junction City</b> has run every year since 2017, alongside HOGCON, festivals and brand collabs.</p></div></div>
     </div>
   </div>
 </div>
 
-<!-- 2nd · ORANGE FIRE · TRAIN -->
+<!-- ORANGE FIRE · TRAIN -->
 <div class="sect right" data-i="2">
-  <div class="kick o">2nd · The Orange Fire — Train</div>
+  <div class="kick o">Train</div>
   <h2>Theory, tested<br/>by <span class="o">deadline</span>.</h2>
   <p class="lead">Study and practical work, fused into one track.</p>
   <div class="chips">
     <div class="chip co">
       <button class="chip-h">UK Pearson Connection · Real Diploma <span class="pm">+</span></button>
-      <div class="chip-b"><p>MCTC is <b>Pearson UK BTEC Centre No. 92672</b> — your diploma is a real UK credential, from Level 3 Foundation up to HND (Level 5), with a Top-up Bachelor pathway in development.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/train_pearson.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>MCTC is <b>Pearson UK BTEC Centre No. 92672</b> — your diploma is a real UK credential, from Level 3 Foundation up to HND (Level 5), with a Top-up Bachelor pathway in development.</p></div></div>
     </div>
     <div class="chip co">
       <button class="chip-h">UK Curriculum <span class="pm">+</span></button>
-      <div class="chip-b"><p>BTEC framework with real production embedded inside it — <b>120 CATS credits at HND</b>, 240 on the full bachelor pathway, aligned to global standards.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/train_curriculum.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>BTEC framework with real production embedded inside it — <b>120 CATS credits at HND</b>, 240 on the full bachelor pathway, aligned to global standards.</p></div></div>
     </div>
     <div class="chip co">
       <button class="chip-h">Industrial Lecturers <span class="pm">+</span></button>
-      <div class="chip-b"><p>Mentors who ship real work — client briefs from <b>Ooredoo, Nestlé and MSI</b> run inside the classroom, and mistakes are corrected in production, not punished by exams.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/train_lecturers.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>Mentors who ship real work — client briefs from <b>Ooredoo, Nestlé and MSI</b> run inside the classroom, and mistakes are corrected in production, not punished by exams.</p></div></div>
     </div>
+  </div>
+  <div class="cred">
+    <img src="../images/btec_logo.png" alt="BTEC" onerror="this.remove()" />
+    <div class="cred-t"><b>Pearson · BTEC</b><span>UK CENTRE NO. 92672</span></div>
+  </div>
+  <div class="docbtns">
+    <a class="dbtn" href="../docs/MCTC_L3_Foundation_Specification.pdf" target="_blank" rel="noopener">&#128196; View specification</a>
+    <a class="dbtn" href="../docs/MCTC_L3_Foundation_Specification.pdf" download>&#8595; Download PDF</a>
+    <a class="dbtn ghost" href="../docs/MCTC_Syllabus_2026.pdf" target="_blank" rel="noopener">Syllabus 2026</a>
   </div>
 </div>
 
-<!-- 3rd · GREEN FIRE · PLACE -->
+<!-- GREEN FIRE · PLACE -->
 <div class="sect" data-i="3">
-  <div class="kick g">3rd · The Green Fire — Place</div>
+  <div class="kick g">Place</div>
   <h2>No certificate-<br/>and-<span class="g">goodbye</span>.</h2>
   <p class="lead">Every graduate is routed somewhere real.</p>
   <div class="chips">
     <div class="chip cg">
       <button class="chip-h">Portfolio <span class="pm">+</span></button>
-      <div class="chip-b"><p>You graduate with <b>shipped work, not just grades</b> — exhibition pieces, client projects and a public showcase that art directors actually look at.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/sw_01_moe_art04.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>You graduate with <b>shipped work, not just grades</b> — exhibition pieces, client projects and a public showcase that art directors actually look at.</p></div></div>
     </div>
     <div class="chip cg">
       <button class="chip-h">Studio <span class="pm">+</span></button>
-      <div class="chip-b"><p>The in-house studio takes commercial work — <b>EDM visuals, AR filters, game art</b> for Nestlé, MSI, Wacom, Bandai, NVIDIA. Earn while you teach, teach while you earn.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/sw_03_soe_art04.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>The in-house studio takes commercial work — <b>EDM visuals, AR filters, game art</b> for Nestlé, MSI, Wacom, Bandai, NVIDIA. Earn while you teach, teach while you earn.</p></div></div>
     </div>
     <div class="chip cg">
       <button class="chip-h">In-house Placement <span class="pm">+</span></button>
-      <div class="chip-b"><p>The coalition network places graduates <b>directly into studios, agencies and ateliers</b> — and mentorship doesn't end at the door.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/place_inhouse.jpg" alt="" loading="lazy" onerror="this.remove()" /><p>The coalition network places graduates <b>directly into studios, agencies and ateliers</b> — and mentorship doesn't end at the door.</p></div></div>
     </div>
     <div class="chip cg">
       <button class="chip-h">Teaching back in MCTC <span class="pm">+</span></button>
-      <div class="chip-b"><p><b>75% of current faculty walked in as students first.</b> The strongest graduates are invited back to teach — the loop that keeps the system alive.</p></div>
+      <div class="chip-b"><div class="cb-in"><img src="../images/place_teaching.jpg" alt="" loading="lazy" onerror="this.remove()" /><p><b>75% of current faculty walked in as students first.</b> The strongest graduates are invited back to teach — the loop that keeps the system alive.</p></div></div>
     </div>
   </div>
 </div>
 
+<!-- STUDENT PORTFOLIO -->
+<div class="sect right" data-i="4">
+  <div class="kick">The Proof</div>
+  <h2>See the MCTC<br/><span class="v">student portfolio</span>.</h2>
+  <p class="lead">A pile of real sheets — chibi, anime, comics, mech, doodle art — by the students who walked through these doors. <b>7 artists exhibited, the batch keeps growing.</b></p>
+  <div class="ctas" style="justify-content:flex-start">
+    <a class="cta hot" href="../showcase/">Open the showcase &rarr;</a>
+  </div>
+</div>
+
 <!-- FINALE -->
-<div class="sect center" data-i="4">
+<div class="sect center" data-i="5">
   <div class="kick">Your turn</div>
   <h2>Step into<br/>the <span class="v">system</span>.</h2>
   <div class="ctas">
@@ -268,12 +336,12 @@ const HUE = { purple:0.0, orange:1.92, green:-2.45 };
 function v3(mx, my, z) { return new THREE.Vector3((mx-800)/55, -(my-450)/55, z); }
 const ND = {
   mctc:      { p: v3(900,450, 0),    c: PAL.violet, hue:HUE.purple, big:true,  size:4.4,  label:'THE CORE',         title:'MCTC' },
-  train:     { p: v3(560,250,-2.0),  c: PAL.orange, hue:HUE.orange, big:true,  size:2.7,  label:'2ND FIRE',         title:'Train' },
+  train:     { p: v3(560,250,-2.0),  c: PAL.orange, hue:HUE.orange, big:true,  size:2.7,  label:'BRANCH A',         title:'Train' },
   learn:     { p: v3(340,120,-4.5),  c: PAL.orange, hue:HUE.orange, size:1.0,  label:'A.1 · LEARN',      title:'Learn' },
   ojt:       { p: v3(460,480, 1.6),  c: PAL.orange, hue:HUE.orange, size:1.0,  label:'A.2 · OJT',        title:'On-Job Training' },
   events:    { p: v3(260,630,-1.2),  c: PAL.violet, hue:HUE.purple, size:0.85, label:'A.3 · EVENTS',     title:'Events' },
   coalitions:{ p: v3(580,730, 2.4),  c: PAL.orange, hue:HUE.orange, size:0.85, label:'A.4 · COALITIONS', title:'Coalitions' },
-  place:     { p: v3(1300,250,-2.0), c: PAL.green,  hue:HUE.green,  big:true,  size:2.7,  label:'3RD FIRE',         title:'Place' },
+  place:     { p: v3(1300,250,-2.0), c: PAL.green,  hue:HUE.green,  big:true,  size:2.7,  label:'BRANCH B',         title:'Place' },
   lecturers: { p: v3(1500,130,-4.5), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.1 · LECTURERS',  title:'Lecturers' },
   studio:    { p: v3(1500,450, 1.6), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.2 · STUDIO',     title:'In-House Studio' },
   partners:  { p: v3(1440,720,-1.2), c: PAL.green,  hue:HUE.green,  size:1.0,  label:'B.3 · PARTNERS',   title:'Partner Businesses' },
@@ -443,36 +511,51 @@ const points = new THREE.Points(pGeo, new THREE.PointsMaterial({
 }));
 scene.add(points);
 
-/* ============ ARTWORK RING ============ */
-const ARTS = ['sw_01_moe_art04','sw_02_khaing_art01','sw_04_saung_art02','sw_06_hein_art01','sw_07_nang_art01','sw_03_soe_art04'];
-const ringCenter = ND.place.p.clone().add(new THREE.Vector3(0, -0.4, 6.5));
-const ring = new THREE.Group();
-ring.position.copy(ringCenter);
-scene.add(ring);
+/* ============ STUDENT PORTFOLIO — pile of sheets (like the showcase) ============ */
+const PILE_POS = new THREE.Vector3(2.2, -6.2, 5.0);
+const pile = new THREE.Group();
+pile.position.copy(PILE_POS);
+scene.add(pile);
 const loadMgr = new THREE.LoadingManager();
 const texLoader = new THREE.TextureLoader(loadMgr);
-ARTS.forEach(function(name, i){
-  texLoader.load('../images/' + name + '.jpg', function(tex){
-    tex.encoding = THREE.sRGBEncoding;
-    const ar = tex.image.width / tex.image.height;
-    const h = 2.1, w = h * ar;
-    const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(w, h),
-      new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
-    );
-    const ang = (i / ARTS.length) * Math.PI * 2;
-    const R = 4.6;
-    mesh.position.set(Math.cos(ang)*R, (i%2 ? 0.55 : -0.55), Math.sin(ang)*R);
-    mesh.lookAt(ringCenter.clone().add(new THREE.Vector3(0, mesh.position.y, 0)));
-    const frame = new THREE.Mesh(
-      new THREE.PlaneGeometry(w+0.12, h+0.12),
-      new THREE.MeshBasicMaterial({ color: PAL.violetSoft, transparent:true, opacity:0.5, side:THREE.DoubleSide })
-    );
-    frame.position.copy(mesh.position).add(mesh.getWorldDirection(new THREE.Vector3()).multiplyScalar(-0.01));
-    frame.quaternion.copy(mesh.quaternion);
-    ring.add(frame);
-    ring.add(mesh);
-  });
+const SHEET_W = 3.5, SHEET_H = 4.6, SHEETS = 9;
+const creams = [0xf5efe3, 0xece3d0, 0xf2ebdd];
+let topSheet = null, topBase = 0;
+for (let i = SHEETS-1; i >= 0; i--) {
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(SHEET_W, SHEET_H),
+    new THREE.MeshBasicMaterial({ color: creams[i % 3], side: THREE.DoubleSide })
+  );
+  const j = (Math.sin(i*37.7)*0.5);
+  m.position.set(j*0.3, -j*0.22, -i*0.07);
+  m.rotation.z = (Math.sin(i*53.3)) * 0.085;
+  pile.add(m);
+  if (i === 0) { topSheet = m; topBase = m.rotation.z; }
+}
+/* artworks on the top sheets */
+texLoader.load('../images/sw_02_khaing_art01.jpg', function(tex){
+  tex.encoding = THREE.sRGBEncoding;
+  const art = new THREE.Mesh(
+    new THREE.PlaneGeometry(SHEET_W*0.86, SHEET_H*0.74),
+    new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
+  );
+  art.position.set(topSheet.position.x, topSheet.position.y + 0.28, topSheet.position.z + 0.01);
+  art.rotation.z = topSheet.rotation.z;
+  pile.add(art);
+  art.userData.isTopArt = true;
+  pile.userData.topArt = art;
+});
+texLoader.load('../images/sw_06_hein_art01.jpg', function(tex){
+  tex.encoding = THREE.sRGBEncoding;
+  const sheet = pile.children[1];
+  if (!sheet) return;
+  const art = new THREE.Mesh(
+    new THREE.PlaneGeometry(SHEET_W*0.86, SHEET_H*0.74),
+    new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
+  );
+  art.position.set(sheet.position.x, sheet.position.y + 0.28, sheet.position.z + 0.005);
+  art.rotation.z = sheet.rotation.z;
+  pile.add(art);
 });
 
 /* ============ LOADER ============ */
@@ -485,9 +568,10 @@ function hideLoader(){ lFill.style.width='100%'; document.getElementById('loader
 /* ============ CAMERA PATH (5 stops) ============ */
 const KEY = [
   { p: 0.00, pos: new THREE.Vector3(0, 1.5, 30),  look: ND.mctc.p },
-  { p: 0.25, pos: new THREE.Vector3(3.2, 1.6, 8.0), look: ND.mctc.p.clone().add(new THREE.Vector3(-0.6, 1.3, 0)) },
-  { p: 0.50, pos: ND.train.p.clone().add(new THREE.Vector3(-3.2, 1.0, 7.5)), look: ND.train.p.clone().add(new THREE.Vector3(0.8, 0.8, 0)) },
-  { p: 0.75, pos: ND.place.p.clone().add(new THREE.Vector3(3.2, 1.2, 7.5)),  look: ND.place.p.clone().add(new THREE.Vector3(-0.8, 0.8, 0)) },
+  { p: 0.20, pos: new THREE.Vector3(3.2, 1.6, 8.5), look: ND.mctc.p.clone().add(new THREE.Vector3(-1.6, 1.3, 0)) },
+  { p: 0.40, pos: ND.train.p.clone().add(new THREE.Vector3(-3.0, 1.0, 8.0)), look: ND.train.p.clone().add(new THREE.Vector3(1.7, 0.8, 0)) },
+  { p: 0.60, pos: ND.place.p.clone().add(new THREE.Vector3(3.0, 1.2, 8.0)),  look: ND.place.p.clone().add(new THREE.Vector3(-1.7, 0.8, 0)) },
+  { p: 0.80, pos: PILE_POS.clone().add(new THREE.Vector3(0, 0.4, 8.2)),      look: PILE_POS.clone().add(new THREE.Vector3(1.8, 0.1, 0)) },
   { p: 1.00, pos: new THREE.Vector3(0, 4, 34),   look: ND.mctc.p },
 ];
 function smooth(t){ return t*t*(3-2*t); }
@@ -501,7 +585,7 @@ function camAt(prog) {
 
 /* sections + rail */
 const sects = [...document.querySelectorAll('.sect')];
-const sectCenters = [0.0, 0.25, 0.50, 0.75, 1.0];
+const sectCenters = [0.0, 0.20, 0.40, 0.60, 0.80, 1.0];
 const rail = document.getElementById('rail');
 function maxScroll(){ return document.body.scrollHeight - innerHeight; }
 sectCenters.forEach(function(c,i){
@@ -633,7 +717,9 @@ function tick() {
     gi++;
   }
   points.rotation.y = t * 0.01;
-  ring.rotation.y = t * 0.12;
+  pile.quaternion.copy(camera.quaternion);
+  if (topSheet) topSheet.rotation.z = topBase + Math.sin(t*0.8)*0.018;
+  if (pile.userData.topArt) pile.userData.topArt.rotation.z = topSheet.rotation.z;
   sects.forEach(function(s){
     const i = +s.dataset.i;
     const dist = Math.abs(smoothP - sectCenters[i]);
