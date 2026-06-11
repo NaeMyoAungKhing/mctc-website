@@ -290,6 +290,8 @@ const flameMatA = new THREE.ShaderMaterial({
 });
 const flameA = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2), flameMatA);
 flameA.position.copy(flameBase).add(new THREE.Vector3(0, 1.35, 0));
+flameA.visible = false; /* stay hidden until real video frames exist (avoids a black square) */
+flameVid.addEventListener('playing', function(){ flameA.visible = true; });
 scene.add(flameA);
 const flameMatB = flameMatA, flameB = flameA;
 /* rising embers */
