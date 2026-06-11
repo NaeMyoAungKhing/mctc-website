@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0a0816" />
 <title>MCTC — Train and Place</title>
 <script>
 /* 3D experience is the default homepage; ?classic (or a prior choice this session) keeps you here */
@@ -121,6 +122,17 @@
     transition: color 0.3s;
   }
   .nav-links a:hover { color: var(--violet-soft); }
+
+  .nav-toggle {
+    display: none;
+    background: none; border: 1px solid var(--line-strong); border-radius: 7px;
+    width: 42px; height: 38px; cursor: pointer; padding: 0;
+    flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  }
+  .nav-toggle span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .25s, opacity .25s; }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
   /* ============ HERO: GRAPH IS THE WHOLE FIRST SCREEN ============ */
   .hero {
@@ -1185,7 +1197,19 @@
   /* ============ RESPONSIVE ============ */
   @media (max-width: 900px) {
     nav { padding: 1rem 1.25rem; }
-    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+    .nav-links {
+      position: fixed; top: 60px; left: 0; right: 0;
+      flex-direction: column; gap: 0;
+      background: rgba(10,8,22,0.97); backdrop-filter: blur(14px);
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      padding: 0.5rem 1.25rem 1rem;
+      font-size: 0.85rem; letter-spacing: 0.1em;
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: max-height .35s ease, opacity .25s, padding .35s;
+    }
+    .nav-links.open { max-height: 80vh; opacity: 1; }
+    .nav-links a { padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
     .hero { min-height: 600px; }
     .hero-title-zone { top: 4.5rem; left: 1.25rem; right: 1.25rem; width: auto; }
     .hero-h1 { font-size: 2rem; }
@@ -1213,7 +1237,8 @@
     <img class="logo-mark" src="images/logo_mark.png" alt="MCTC logo" />
     <span>MCTC</span>
   </div>
-  <div class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  <div class="nav-links" id="navLinks">
     <a href="#culture">Culture</a>
     <a href="#train">Train</a>
     <a href="#place">Place</a>
@@ -1225,6 +1250,19 @@
     <a href="#contact">Contact</a>
   </div>
 </nav>
+<script>
+  (function(){
+    var t = document.getElementById('navToggle'), l = document.getElementById('navLinks');
+    if (!t || !l) return;
+    function close(){ l.classList.remove('open'); t.classList.remove('open'); t.setAttribute('aria-expanded','false'); }
+    t.addEventListener('click', function(){
+      var open = l.classList.toggle('open');
+      t.classList.toggle('open', open);
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    l.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', close); });
+  })();
+</script>
 
 <!-- ========== HERO: NODE GRAPH ========== -->
 <section class="hero" id="system">
