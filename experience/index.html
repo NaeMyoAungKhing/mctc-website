@@ -233,7 +233,7 @@ const GLOW = glowTex();
 const nodeGroup = new THREE.Group(); scene.add(nodeGroup);
 for (const id in ND) {
   const n = ND[id];
-  if (id !== 'mctc') {
+  if (id !== 'mctc' && id !== 'train' && id !== 'place') {
     const m = new THREE.Mesh(
       new THREE.SphereGeometry(n.r, 24, 24),
       new THREE.MeshBasicMaterial({ color: n.c })
@@ -308,8 +308,8 @@ function addFlame(size, basePos, yOff, hueRad) {
   return mesh;
 }
 const flameA = addFlame(4.2, flameBase, 1.35, 0.0);   /* brand purple — MCTC core */
-addFlame(2.3, ND.train.p, 1.05, 1.83);                /* orange — Train branch */
-addFlame(2.3, ND.place.p, 1.05, -2.62);               /* green — Place branch */
+addFlame(2.3, ND.train.p, 0.62, 1.83);                /* orange — Train branch */
+addFlame(2.3, ND.place.p, 0.62, -2.62);               /* green — Place branch */
 flameVid.addEventListener('playing', function(){ FLAMES.forEach(function(f){ f.mesh.visible = true; }); });
 const flameMatA = FLAMES[0].mat;
 const flameMatB = flameMatA, flameB = flameA;
