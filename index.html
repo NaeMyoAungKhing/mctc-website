@@ -260,9 +260,9 @@
   }
   .legend-item { display: flex; align-items: center; gap: 0.4rem; }
   .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .legend-dot.root { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-  .legend-dot.train { background: var(--violet); box-shadow: 0 0 8px var(--violet); }
-  .legend-dot.place { background: var(--lavender); box-shadow: 0 0 8px var(--lavender); }
+  .legend-dot.root { background: var(--violet); box-shadow: 0 0 8px var(--violet); }
+  .legend-dot.train { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+  .legend-dot.place { background: #35d98b; box-shadow: 0 0 8px #35d98b; }
   .legend-dot.loop { background: var(--pure); box-shadow: 0 0 8px var(--pure); }
 
   /* Scroll cue bottom-left */
@@ -1856,8 +1856,8 @@ const edges = [
 
 const nodeById = id => nodes.find(n => n.id === id);
 const colorOf = type => ({
-  root: '#ff914d',
-  train: '#8a4bd0',
+  root: '#8a4bd0',
+  train: '#ff914d',
   place: '#35d98b',
   flow: '#00bf63',
   loop: '#ffffff',
@@ -1870,8 +1870,8 @@ function renderGraph() {
     <defs>
       <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
       <filter id="strongGlow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      <radialGradient id="rootGrad"><stop offset="0%" stop-color="#ffb586"/><stop offset="100%" stop-color="#d96a26"/></radialGradient>
-      <radialGradient id="trainGrad"><stop offset="0%" stop-color="#b08ae0"/><stop offset="100%" stop-color="#5f2b8e"/></radialGradient>
+      <radialGradient id="rootGrad"><stop offset="0%" stop-color="#b08ae0"/><stop offset="100%" stop-color="#5f2b8e"/></radialGradient>
+      <radialGradient id="trainGrad"><stop offset="0%" stop-color="#ffb586"/><stop offset="100%" stop-color="#d96a26"/></radialGradient>
       <radialGradient id="placeGrad"><stop offset="0%" stop-color="#35d98b"/><stop offset="100%" stop-color="#00bf63"/></radialGradient>
       <radialGradient id="loopGrad"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#9999aa"/></radialGradient>
     </defs>
