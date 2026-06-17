@@ -860,6 +860,12 @@
     align-items: center;
   }
   .partner-item:hover { color: var(--violet-soft); }
+  .partner-item img {
+    height: 30px; width: auto; max-width: 150px; object-fit: contain;
+    opacity: 0.62; transition: opacity 0.3s, filter 0.3s;
+    filter: saturate(0) brightness(1.6);
+  }
+  .partner-item:hover img { opacity: 1; filter: none; }
   .partner-item::after {
     content: '·';
     color: var(--violet);
@@ -1764,25 +1770,37 @@ const TESTIMONIALS = [
 <section class="partners">
   <div class="partners-label">09 / Coalition</div>
   <div class="partners-title">We co-build with</div>
-  <div class="marquee">
-    <span class="partner-item">Nestlé</span>
-    <span class="partner-item">MSI</span>
-    <span class="partner-item">WACOM</span>
-    <span class="partner-item">Bandai</span>
-    <span class="partner-item">NVIDIA</span>
-    <span class="partner-item">Ooredoo</span>
-    <span class="partner-item">Viewsonic</span>
-    <span class="partner-item">Pearson UK</span>
-    <span class="partner-item">Nestlé</span>
-    <span class="partner-item">MSI</span>
-    <span class="partner-item">WACOM</span>
-    <span class="partner-item">Bandai</span>
-    <span class="partner-item">NVIDIA</span>
-    <span class="partner-item">Ooredoo</span>
-    <span class="partner-item">Viewsonic</span>
-    <span class="partner-item">Pearson UK</span>
-  </div>
+  <div class="marquee" id="partnerMarquee"></div>
 </section>
+<script>
+/* Coalition logos — official marks via Simple Icons CDN; text name shown automatically if a logo isn't available */
+(function(){
+  const PARTNERS = [
+    { name: 'Nestlé',     slug: 'nestle' },
+    { name: 'MSI',        slug: 'msibusiness' },
+    { name: 'Wacom',      slug: 'wacom' },
+    { name: 'Bandai Namco', slug: 'bandainamco' },
+    { name: 'NVIDIA',     slug: 'nvidia' },
+    { name: 'Ooredoo',    slug: 'ooredoo' },
+    { name: 'ViewSonic',  slug: 'viewsonic' },
+    { name: 'Pearson',    slug: 'pearson' },
+  ];
+  const wrap = document.getElementById('partnerMarquee');
+  function build(list){
+    list.forEach(p => {
+      const item = document.createElement('span');
+      item.className = 'partner-item';
+      const img = document.createElement('img');
+      img.src = 'https://cdn.simpleicons.org/' + p.slug + '/e8e4f4';
+      img.alt = p.name; img.loading = 'lazy';
+      img.onerror = function(){ item.textContent = p.name; };
+      item.appendChild(img);
+      wrap.appendChild(item);
+    });
+  }
+  build(PARTNERS); build(PARTNERS); /* duplicate for seamless loop */
+})();
+</script>
 
 <!-- ========== FOOTER ========== -->
 <footer id="contact">
