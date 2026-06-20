@@ -55,6 +55,10 @@
   .sect h1 .g, .sect h2 .g { color:var(--green-soft); }
   .sect p.lead { margin-top:1rem; color:var(--ink-dim); font-size:clamp(0.9rem,1.3vw,1rem); line-height:1.6; }
   .sect p.lead b { color:var(--ink); }
+  .sect-no { display:flex; align-items:center; gap:0.6rem; font-family:var(--mono); font-size:0.6rem; letter-spacing:0.28em; color:rgba(244,241,234,0.4); margin-bottom:0.85rem; }
+  .sect.center .sect-no { justify-content:center; }
+  .sect-no b { color:var(--violet-soft); font-weight:500; }
+  .sect-no i { flex:0 0 26px; height:1px; background:rgba(176,138,224,0.5); font-style:normal; }
 
   /* expandable mini sections — presentation cards with glitch reveal */
   .chips { margin-top:1.4rem; display:flex; flex-direction:column; gap:0.55rem; max-width:520px; }
@@ -141,13 +145,27 @@
   .cta.hot { border-color:var(--orange); }
   .cta.hot:hover { background:rgba(255,145,77,0.18); box-shadow:0 0 24px rgba(255,145,77,0.35); }
 
-  #loader { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.2rem; transition:opacity .9s; }
+  /* ============ LOADER / INTRO ============ */
+  #loader { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; align-items:center; justify-content:center; transition:opacity 1s ease; }
   #loader.off { opacity:0; pointer-events:none; }
-  #loader img { width:90px; height:90px; animation:lpulse 1.6s ease-in-out infinite; }
-  @keyframes lpulse { 0%,100%{transform:scale(1); filter:drop-shadow(0 0 18px rgba(138,75,208,0.5))} 50%{transform:scale(1.07); filter:drop-shadow(0 0 34px rgba(176,138,224,0.6))} }
-  #loader .lt { font-family:var(--mono); font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--ink-dim); }
-  #lbar { width:180px; height:2px; background:rgba(244,241,234,0.12); border-radius:2px; overflow:hidden; }
-  #lbar div { height:100%; width:0%; background:linear-gradient(90deg,var(--violet),var(--orange)); transition:width .3s; }
+  #loader::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.55) 100%); pointer-events:none; }
+  .ld-inner { position:relative; z-index:1; width:min(86vw,340px); display:flex; flex-direction:column; align-items:center; text-align:center; animation:ldUp 1s ease both; }
+  @keyframes ldUp { from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none} }
+  .ld-mark { width:72px; height:72px; animation:lpulse 2.2s ease-in-out infinite; }
+  @keyframes lpulse { 0%,100%{transform:scale(1); filter:drop-shadow(0 0 16px rgba(138,75,208,0.45))} 50%{transform:scale(1.06); filter:drop-shadow(0 0 32px rgba(176,138,224,0.6))} }
+  .ld-word { margin-top:1.5rem; font-family:var(--mono); font-size:0.52rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--ink-dim); padding-left:0.4em; }
+  .ld-title { margin-top:0.55rem; font-weight:900; font-size:1.5rem; letter-spacing:-0.01em; }
+  .ld-title span { color:var(--violet-soft); }
+  .ld-meta { margin-top:1.8rem; width:100%; display:flex; align-items:baseline; justify-content:space-between; font-family:var(--mono); font-size:0.56rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink-dim); }
+  .ld-pct { color:var(--ink); font-size:0.78rem; letter-spacing:0.08em; font-variant-numeric:tabular-nums; }
+  #lbar { margin-top:0.6rem; width:100%; height:1px; background:rgba(244,241,234,0.12); overflow:hidden; }
+  #lbar div { height:100%; width:0%; background:linear-gradient(90deg,var(--violet),var(--orange)); transition:width .35s ease; }
+
+  /* staggered scene reveal after the loader lifts */
+  #c3d { opacity:0; transition:opacity 1.8s ease; }
+  body.ready #c3d { opacity:1; }
+  #bar, #rail, #navarrows { opacity:0; transition:opacity 1s ease 0.25s; }
+  body.ready #bar, body.ready #rail, body.ready #navarrows { opacity:1; }
 
   #navarrows { position:fixed; right:1.1rem; bottom:1.4rem; z-index:25; display:flex; flex-direction:column; gap:0.55rem; }
   .navbtn {
@@ -347,9 +365,13 @@
 </div>
 
 <div id="loader">
-  <img src="../images/logo_mark.png" alt="MCTC" />
-  <div class="lt">Igniting the system</div>
-  <div id="lbar"><div></div></div>
+  <div class="ld-inner">
+    <img class="ld-mark" src="../images/logo_mark.png" alt="MCTC" />
+    <div class="ld-word">Myanmar Creative Technology College</div>
+    <div class="ld-title">The <span>Living System</span></div>
+    <div class="ld-meta"><span class="ld-status">Igniting the system</span><span class="ld-pct">00</span></div>
+    <div id="lbar"><div></div></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -614,10 +636,34 @@ texLoader.load('../images/sw_06_hein_art01.jpg', function(tex){
 
 /* ============ LOADER ============ */
 const lFill = document.querySelector('#lbar div');
-loadMgr.onProgress = function(u, l, t){ lFill.style.width = Math.round(l/t*100) + '%'; };
-let bootT = setTimeout(hideLoader, 4000);
-loadMgr.onLoad = function(){ clearTimeout(bootT); hideLoader(); };
-function hideLoader(){ lFill.style.width='100%'; document.getElementById('loader').classList.add('off'); }
+const lPct = document.querySelector('.ld-pct');
+const lStatus = document.querySelector('.ld-status');
+let realProg = 0, shown = 0, loaderDone = false;
+loadMgr.onProgress = function(u, l, t){ realProg = Math.max(realProg, l/t); };
+loadMgr.onLoad = function(){ realProg = 1; };
+const bootT = setTimeout(function(){ realProg = 1; }, 4500); /* safety if assets stall */
+const loadT0 = performance.now();
+function tickLoader(){
+  if (loaderDone) return;
+  const minTime = Math.min(1, (performance.now() - loadT0) / 1800); /* premium minimum dwell */
+  shown += (Math.min(realProg, 1) - shown) * 0.12;
+  if (realProg >= 1 && minTime >= 1) {
+    loaderDone = true;
+    lPct.textContent = '100'; lFill.style.width = '100%'; lStatus.textContent = 'Welcome';
+    clearTimeout(bootT);
+    setTimeout(revealScene, 560);
+    return;
+  }
+  const pct = Math.min(99, Math.floor(shown * 100));
+  lPct.textContent = (pct < 10 ? '0' : '') + pct;
+  lFill.style.width = pct + '%';
+  requestAnimationFrame(tickLoader);
+}
+requestAnimationFrame(tickLoader);
+function revealScene(){
+  document.getElementById('loader').classList.add('off');
+  document.body.classList.add('ready');
+}
 
 /* ============ CAMERA PATH (5 stops) ============ */
 const KEY = [
@@ -640,6 +686,14 @@ function camAt(prog) {
 /* sections + rail */
 const sects = [...document.querySelectorAll('.sect')];
 const sectCenters = [0.0, 0.20, 0.40, 0.60, 0.80, 1.0];
+/* stamp each stop with a destination number (01 / 06) — the journey reads deliberately */
+sects.forEach(function(s){
+  const i = +s.dataset.i;
+  const no = document.createElement('div');
+  no.className = 'sect-no';
+  no.innerHTML = '<b>' + String(i+1).padStart(2,'0') + '</b><i></i>' + String(sects.length).padStart(2,'0');
+  s.insertBefore(no, s.firstChild);
+});
 const rail = document.getElementById('rail');
 function maxScroll(){ return document.body.scrollHeight - innerHeight; }
 sectCenters.forEach(function(c,i){
