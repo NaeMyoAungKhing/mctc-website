@@ -532,6 +532,7 @@ scene.add(embers);
 let mascot = null, mascotY0 = 0, mascotMixer = null;
 const mascotPivot = new THREE.Group();
 mascotPivot.position.copy(flameBase).add(new THREE.Vector3(0, -1.45, 1.25));
+mascotPivot.visible = false; /* only reveal at the Living System core stop */
 scene.add(mascotPivot);
 /* warm fill so she reads against the dark scene */
 const mascotKey = new THREE.DirectionalLight(0xffffff, 0.9); mascotKey.position.set(3, 6, 6); scene.add(mascotKey);
@@ -791,11 +792,15 @@ function tick() {
   camera.position.y += -mouseY * 0.8;
   camera.lookAt(cam.look);
 
-  /* mascot idle: real skeletal animation + a slow turn to a friendly 3/4 toward camera */
-  if (mascotMixer) mascotMixer.update(dt);
+  /* mascot: only show near the Living System core stop so she never looms into the intro */
   if (mascot) {
-    const want = Math.atan2(camera.position.x - mascotPivot.position.x, camera.position.z - mascotPivot.position.z) - 0.45;
-    mascotPivot.rotation.y += (want - mascotPivot.rotation.y) * 0.03;
+    const near = smoothP > 0.10 && smoothP < 0.33;
+    mascotPivot.visible = near;
+    if (near) {
+      if (mascotMixer) mascotMixer.update(dt);
+      const want = Math.atan2(camera.position.x - mascotPivot.position.x, camera.position.z - mascotPivot.position.z) - 0.45;
+      mascotPivot.rotation.y += (want - mascotPivot.rotation.y) * 0.03;
+    }
   }
 
   FLAMES.forEach(function(f){
