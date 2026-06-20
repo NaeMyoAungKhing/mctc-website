@@ -538,36 +538,10 @@ scene.add(mascotPivot);
 const mascotKey = new THREE.DirectionalLight(0xffffff, 0.9); mascotKey.position.set(3, 6, 6); scene.add(mascotKey);
 const mascotRim = new THREE.DirectionalLight(0x8a4bd0, 0.6); mascotRim.position.set(-4, 2, -3); scene.add(mascotRim);
 const mascotAmb = new THREE.AmbientLight(0xb08ae0, 0.35); scene.add(mascotAmb);
-try {
-  new THREE.GLTFLoader().load('mascot_idle.glb', function(gltf){
-    const obj = gltf.scene;
-    const box = new THREE.Box3().setFromObject(obj);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-    const targetH = 3.0;
-    const s = targetH / (size.y || 1.7);
-    obj.scale.setScalar(s);
-    /* re-center: feet at pivot origin */
-    obj.position.set(-center.x * s, -box.min.y * s, -center.z * s);
-    obj.traverse(function(n){ if (n.isMesh){ n.castShadow = false; n.frustumCulled = false; } });
-    /* play a gentle idle: the walk cycle slowed right down reads as a relaxed sway */
-    if (gltf.animations && gltf.animations.length){
-      mascotMixer = new THREE.AnimationMixer(obj);
-      const clip = gltf.animations.find(function(c){ return /walk/i.test(c.name); }) || gltf.animations[0];
-      /* Meshy clips carry huge root translation (Hips drifts 100s of units) — strip ALL
-         position tracks so she animates IN PLACE, grounded at the core instead of walking
-         off into / through the camera. */
-      clip.tracks = clip.tracks.filter(function(tr){ return tr.name.indexOf('.position') === -1; });
-      const act = mascotMixer.clipAction(clip);
-      act.timeScale = 0.5;
-      act.play();
-    }
-    mascot = obj;
-    mascotY0 = obj.position.y;
-    mascotPivot.rotation.y = -0.45; /* friendly 3/4 angle */
-    mascotPivot.add(obj);
-  }, undefined, function(){ /* model optional — scene works without it */ });
-} catch(e) {}
+/* Mascot temporarily removed from the 3D scene (the auto-rigged Meshy model
+   intersected the camera flight path). Kept the pivot/vars so the rest of the
+   code stays safe; nothing is loaded, so nothing can render into the camera. */
+mascotPivot.visible = false;
 
 /* ============ PARTICLES ============ */
 const PCOUNT = innerWidth < 700 ? 2600 : 6500;
