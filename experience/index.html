@@ -554,8 +554,12 @@ try {
     if (gltf.animations && gltf.animations.length){
       mascotMixer = new THREE.AnimationMixer(obj);
       const clip = gltf.animations.find(function(c){ return /walk/i.test(c.name); }) || gltf.animations[0];
+      /* Meshy clips carry huge root translation (Hips drifts 100s of units) — strip ALL
+         position tracks so she animates IN PLACE, grounded at the core instead of walking
+         off into / through the camera. */
+      clip.tracks = clip.tracks.filter(function(tr){ return tr.name.indexOf('.position') === -1; });
       const act = mascotMixer.clipAction(clip);
-      act.timeScale = 0.45;
+      act.timeScale = 0.5;
       act.play();
     }
     mascot = obj;
