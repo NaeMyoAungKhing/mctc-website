@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCTC Mascot — Model Test</title>
+<style>
+  html,body{margin:0;height:100%;background:#0a0816;overflow:hidden;font-family:monospace;}
+  #info{position:fixed;top:12px;left:14px;color:#b08ae0;font-size:12px;z-index:5;white-space:pre;}
+  canvas{display:block;}
+</style>
+</head>
+<body>
+<div id="info">loading…</div>
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const info = document.getElementById('info');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0816);
+const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 5000);
+camera.position.set(0, 120, 320);
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(120,200,160); scene.add(key);
+const rim = new THREE.DirectionalLight(0x8a4bd0, 0.7); rim.position.set(-160,80,-120); scene.add(rim);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 1.6;
+
+let mixer = null;
+const clock = new THREE.Clock();
+const loader = new THREE.FBXLoader();
+loader.load('chubby_idle.fbx', (obj) => {
+  // frame the model
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  obj.position.sub(center);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  controls.target.set(0,0,0);
+  camera.position.set(0, maxDim*0.15, maxDim*1.9);
+  camera.near = maxDim/100; camera.far = maxDim*20; camera.updateProjectionMatrix();
+  scene.add(obj);
+  // any animations?
+  let anim = 'none';
+  if (obj.animations && obj.animations.length) {
+    mixer = new THREE.AnimationMixer(obj);
+    mixer.clipAction(obj.animations[0]).play();
+    anim = obj.animations[0].name + ' (' + obj.animations[0].duration.toFixed(1) + 's)';
+  }
+  let meshCount=0, matNames=new Set();
+  obj.traverse(n => { if (n.isMesh){ meshCount++; (Array.isArray(n.material)?n.material:[n.material]).forEach(m=>m&&matNames.add(m.name)); } });
+  info.textContent = 'LOADED\nmeshes: '+meshCount+'\nanim: '+anim+'\nmaterials: '+[...matNames].slice(0,8).join(', ')+'\nsize: '+maxDim.toFixed(0);
+}, (e) => { info.textContent = 'loading… ' + (e.total ? Math.round(e.loaded/e.total*100)+'%' : Math.round(e.loaded/1024)+'kb'); },
+   (err) => { info.textContent = 'ERROR: ' + err; });
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+(function tick(){
+  requestAnimationFrame(tick);
+  if (mixer) mixer.update(clock.getDelta());
+  controls.update();
+  renderer.render(scene, camera);
+})();
+</script>
+</body>
+</html>
