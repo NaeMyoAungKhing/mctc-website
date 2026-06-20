@@ -169,6 +169,30 @@
   #begin:hover { background:rgba(138,75,208,0.3); box-shadow:0 0 26px rgba(138,75,208,0.45); }
   body.dragging { cursor:grabbing; }
 
+  /* mascot welcome card */
+  #mascotCard { position:fixed; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:6vw; background:rgba(6,4,14,0.78); backdrop-filter:blur(8px); }
+  #mascotCard.on { display:flex; animation:mcin .35s ease; }
+  @keyframes mcin { from{opacity:0} to{opacity:1} }
+  #mascotCard .mc {
+    position:relative; width:min(440px,92vw);
+    background:rgba(17,13,34,0.96); border:1px solid rgba(138,75,208,0.45); border-radius:16px;
+    padding:1.9rem 1.8rem 1.7rem; text-align:center;
+    box-shadow:0 30px 90px rgba(0,0,0,0.55), 0 0 50px rgba(138,75,208,0.2);
+  }
+  #mascotCard .mc-close { position:absolute; top:0.7rem; right:0.9rem; background:none; border:none; color:var(--ink-dim); font-size:1.4rem; cursor:pointer; }
+  #mascotCard .mc-kick { font-family:var(--mono); font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--violet-soft); }
+  #mascotCard h3 { font-size:1.5rem; font-weight:900; margin:0.5rem 0 0.4rem; }
+  #mascotCard h3 span { color:var(--violet-soft); }
+  #mascotCard p { color:var(--ink-dim); font-size:0.92rem; line-height:1.6; }
+  #mascotCard .mc-btns { margin-top:1.4rem; display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:center; }
+  #mascotCard a.mc-btn {
+    font-family:var(--mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; text-decoration:none;
+    color:var(--ink); border:1px solid var(--violet); border-radius:7px; padding:0.8rem 1.2rem; transition:all .25s;
+  }
+  #mascotCard a.mc-btn:hover { background:rgba(138,75,208,0.22); box-shadow:0 0 20px rgba(138,75,208,0.35); }
+  #mascotCard a.mc-btn.hot { border-color:var(--orange); }
+  #mascotCard a.mc-btn.hot:hover { background:rgba(255,145,77,0.16); box-shadow:0 0 20px rgba(255,145,77,0.3); }
+
   @media (max-width:700px) {
     .sect { left:6vw; right:6vw; max-width:none; }
     .sect h1 { font-size:clamp(2.1rem,9vw,3rem); }
@@ -309,6 +333,19 @@
   </div>
 </div>
 
+<div id="mascotCard">
+  <div class="mc">
+    <button class="mc-close" aria-label="Close">&times;</button>
+    <div class="mc-kick">Your MCTC guide</div>
+    <h3>Hi — welcome to the <span>living system</span>.</h3>
+    <p>I'm the MCTC mascot, made by our own students. Scroll to fly through Train, Place and the Loop — or jump straight to joining us.</p>
+    <div class="mc-btns">
+      <a class="mc-btn hot" href="../?classic#admissions">Apply / Contact</a>
+      <a class="mc-btn" href="../showcase/">See student art</a>
+    </div>
+  </div>
+</div>
+
 <div id="loader">
   <img src="../images/logo_mark.png" alt="MCTC" />
   <div class="lt">Igniting the system</div>
@@ -316,6 +353,8 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 <script>
 /* ============ SETUP ============ */
 const canvas = document.getElementById('c3d');
@@ -489,6 +528,32 @@ const embers = new THREE.Points(embGeo, new THREE.PointsMaterial({
 }));
 scene.add(embers);
 
+/* ============ MASCOT (student-made FBX, stands at the MCTC core) ============ */
+let mascot = null, mascotY0 = 0;
+const mascotPivot = new THREE.Group();
+mascotPivot.position.copy(flameBase).add(new THREE.Vector3(0, -1.45, 1.25));
+scene.add(mascotPivot);
+/* warm fill so she reads against the dark scene */
+const mascotKey = new THREE.DirectionalLight(0xffffff, 0.9); mascotKey.position.set(3, 6, 6); scene.add(mascotKey);
+const mascotRim = new THREE.DirectionalLight(0x8a4bd0, 0.6); mascotRim.position.set(-4, 2, -3); scene.add(mascotRim);
+const mascotAmb = new THREE.AmbientLight(0xb08ae0, 0.35); scene.add(mascotAmb);
+try {
+  new THREE.FBXLoader().load('mascot.fbx', function(obj){
+    const box = new THREE.Box3().setFromObject(obj);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const targetH = 3.0;
+    const s = targetH / (size.y || 11);
+    obj.scale.setScalar(s);
+    /* re-center: feet at pivot origin */
+    obj.position.set(-center.x * s, -box.min.y * s, -center.z * s);
+    obj.traverse(function(n){ if (n.isMesh){ n.castShadow = false; n.frustumCulled = false; } });
+    mascot = obj;
+    mascotY0 = obj.position.y;
+    mascotPivot.add(obj);
+  }, undefined, function(){ /* model optional — scene works without it */ });
+} catch(e) {}
+
 /* ============ PARTICLES ============ */
 const PCOUNT = innerWidth < 700 ? 2600 : 6500;
 const pGeo = new THREE.BufferGeometry();
@@ -644,15 +709,38 @@ addEventListener('pointermove', function(e){
   dragMoved += Math.abs(dy);
   window.scrollBy(0, -dy * 2.4);
 });
+/* raycast: did the pointer hit the mascot? */
+const _ray = new THREE.Raycaster(), _pt = new THREE.Vector2();
+function hitMascot(clientX, clientY){
+  if (!mascot) return false;
+  _pt.x = (clientX/innerWidth)*2 - 1;
+  _pt.y = -(clientY/innerHeight)*2 + 1;
+  _ray.setFromCamera(_pt, camera);
+  return _ray.intersectObject(mascot, true).length > 0;
+}
 addEventListener('pointerup', function(e){
   if (dragY === null) return;
   document.body.classList.remove('dragging');
   const wasDrag = dragMoved > 8;
   dragY = null;
-  if (!wasDrag && e.pointerType === 'mouse' && !e.target.closest('a, button, #rail, #bar, .sect')) {
-    goTo(curSection()+1);
-  }
+  if (wasDrag) return;
+  if (e.target.closest('a, button, #rail, #bar, .sect, #mascotCard')) return;
+  if (hitMascot(e.clientX, e.clientY)) { openMascotCard(); return; }
+  if (e.pointerType === 'mouse') goTo(curSection()+1);
 });
+/* touch tap on mascot */
+addEventListener('click', function(e){
+  if (e.target.closest('a, button, #rail, #bar, .sect, #mascotCard')) return;
+  if (hitMascot(e.clientX, e.clientY)) openMascotCard();
+});
+
+/* mascot welcome card */
+function openMascotCard(){ document.getElementById('mascotCard').classList.add('on'); }
+(function(){
+  const c = document.getElementById('mascotCard');
+  c.querySelector('.mc-close').onclick = function(){ c.classList.remove('on'); };
+  c.addEventListener('click', function(e){ if (e.target === c) c.classList.remove('on'); });
+})();
 
 /* expandable chips: one open per group */
 document.querySelectorAll('.chip-h').forEach(function(h){
@@ -690,6 +778,14 @@ function tick() {
   camera.position.x += mouseX * 1.2;
   camera.position.y += -mouseY * 0.8;
   camera.lookAt(cam.look);
+
+  /* mascot idle: gentle breathing bob, sway, and slow turn toward the camera */
+  if (mascot) {
+    mascot.position.y = mascotY0 + Math.sin(t*1.6) * 0.045;
+    mascot.rotation.z = Math.sin(t*0.9) * 0.02;
+    const want = Math.atan2(camera.position.x - mascotPivot.position.x, camera.position.z - mascotPivot.position.z);
+    mascotPivot.rotation.y += (want - mascotPivot.rotation.y) * 0.04;
+  }
 
   FLAMES.forEach(function(f){
     f.mesh.quaternion.copy(camera.quaternion);
