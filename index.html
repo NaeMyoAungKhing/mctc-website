@@ -132,26 +132,23 @@
   /* ============ HERO: GRAPH IS THE WHOLE FIRST SCREEN ============ */
   .hero {
     position: relative;
-    height: 100vh;
-    min-height: 700px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
     overflow: hidden;
+    padding: 7rem 3rem 4rem;
     background:
-      radial-gradient(ellipse at 25% 30%, rgba(138,75,208,0.18) 0%, transparent 55%),
-      radial-gradient(ellipse at 75% 70%, rgba(255,145,77,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 25%, rgba(138,75,208,0.20) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 75%, rgba(255,145,77,0.12) 0%, transparent 55%),
       var(--bg);
   }
-
-  /* TITLE ZONE — small, top-left, contained */
-  .hero-title-zone {
-    position: absolute;
-    top: 5rem;
-    left: 3rem;
-    z-index: 5;
-    width: 380px;
-    max-width: calc(100vw - 6rem);
-    pointer-events: none;
+  .hero-inner {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 5rem); align-items: center;
   }
-  .hero-title-zone > * { pointer-events: auto; }
+  .hero-copy { max-width: 560px; }
 
   .eyebrow {
     font-family: var(--mono);
@@ -176,10 +173,10 @@
   .hero-h1 {
     font-family: var(--display);
     font-weight: 300;
-    font-size: clamp(2.25rem, 4vw, 3.5rem);
-    line-height: 1;
+    font-size: clamp(2.8rem, 6vw, 4.6rem);
+    line-height: 0.98;
     letter-spacing: -0.03em;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     opacity: 0;
     animation: fadeUp 1.2s 0.4s forwards;
   }
@@ -199,66 +196,53 @@
   }
   .hero-tagline strong { color: var(--ink); font-weight: 400; }
 
-  .hero-cta-hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    color: var(--violet-soft);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.6rem 0.9rem;
-    border: 1px solid var(--violet);
-    background: rgba(138,75,208,0.08);
-    opacity: 0;
-    animation: fadeUp 1.2s 1s forwards;
+  .hero-ctas {
+    display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2.4rem;
+    opacity: 0; animation: fadeUp 1.2s 1s forwards;
   }
-  .hero-cta-hint .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--violet);
-    animation: blink 1.4s ease-in-out infinite;
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 0.85rem 1.4rem; border-radius: 999px;
+    border: 1px solid rgba(244,241,234,0.18); color: var(--ink);
+    text-decoration: none; transition: all .25s ease;
   }
-  @keyframes blink {
-    0%,100% { opacity: 0.3; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.2); }
+  .hero-btn:hover { border-color: var(--violet-soft); background: rgba(138,75,208,0.10); transform: translateY(-1px); }
+  .hero-btn.primary {
+    border-color: transparent;
+    background: linear-gradient(90deg, var(--violet), var(--gold));
+    color: #fff; font-weight: 500;
   }
+  .hero-btn.primary:hover { filter: brightness(1.08); box-shadow: 0 10px 30px rgba(138,75,208,0.35); }
 
-  /* GRAPH CANVAS */
-  .graph-container {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
+  .hero-stats {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 1.2s 1.3s forwards;
   }
-  #node-graph {
-    width: 100%;
-    height: 100%;
-  }
-  #node-graph .node { cursor: pointer; }
+  .hero-stats > div { display: flex; flex-direction: column; gap: 0.2rem; }
+  .hero-stats b { font-family: var(--display); font-weight: 500; font-size: 1.15rem; color: var(--ink); }
+  .hero-stats span { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
 
-  /* Legend bottom-right */
-  .legend {
-    position: absolute;
-    bottom: 2rem;
-    right: 3rem;
-    display: flex;
-    gap: 1.25rem;
-    flex-wrap: wrap;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--ink-dim);
-    z-index: 5;
-    opacity: 0;
-    animation: fadeUp 1.2s 1.4s forwards;
+  /* FEATURE VISUAL — student work */
+  .hero-visual {
+    position: relative; justify-self: end;
+    width: 100%; max-width: 420px; aspect-ratio: 4 / 5;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(244,241,234,0.12);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(138,75,208,0.18);
+    opacity: 0; animation: fadeUp 1.4s 0.6s forwards;
   }
-  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .legend-dot.root { background: var(--violet); box-shadow: 0 0 8px var(--violet); }
-  .legend-dot.train { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-  .legend-dot.place { background: #35d98b; box-shadow: 0 0 8px #35d98b; }
-  .legend-dot.loop { background: var(--pure); box-shadow: 0 0 8px var(--pure); }
+  .hero-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-visual-cap {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 2rem 1.2rem 1rem;
+    background: linear-gradient(transparent, rgba(6,4,14,0.9));
+    display: flex; flex-direction: column; gap: 0.15rem;
+  }
+  .hero-visual-cap b { font-weight: 600; font-size: 0.9rem; color: var(--ink); }
+  .hero-visual-cap span { font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet-soft); }
+
+  #node-graph { display: none !important; }
 
   /* Scroll cue bottom-left */
   .scroll-cue {
@@ -1288,10 +1272,12 @@
     }
     .nav-links.open { max-height: 80vh; opacity: 1; }
     .nav-links a { padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
-    .hero { min-height: 600px; }
-    .hero-title-zone { top: 4.5rem; left: 1.25rem; right: 1.25rem; width: auto; }
-    .hero-h1 { font-size: 2rem; }
-    .legend { right: 1.25rem; left: 1.25rem; bottom: 1.5rem; justify-content: center; }
+    .hero { padding: 5.5rem 1.25rem 3rem; min-height: auto; }
+    .hero-inner { grid-template-columns: 1fr; gap: 2.2rem; }
+    .hero-visual { order: -1; justify-self: stretch; max-width: 100%; aspect-ratio: 16 / 10; }
+    .hero-h1 { font-size: clamp(2.4rem, 13vw, 3.2rem); }
+    .hero-stats { gap: 1.3rem; }
+    .hero-btn { flex: 1 1 auto; justify-content: center; }
     .scroll-cue { display: none; }
     .stats-bar { gap: 1.25rem; padding: 1.5rem 1.25rem; }
     .stats-bar span strong { font-size: 1.5rem; }
@@ -1342,34 +1328,39 @@
   })();
 </script>
 
-<!-- ========== HERO: NODE GRAPH ========== -->
+<!-- ========== HERO ========== -->
 <section class="hero" id="system">
 
-  <!-- Title zone (top-left, contained, won't fight the graph) -->
-  <div class="hero-title-zone">
-    <div class="eyebrow">Myanmar Creative Technology College · Est. 2017</div>
-    <h1 class="hero-h1">
-      Train<span class="amp">&amp;</span><span class="italic">Place</span>
-    </h1>
-    <p class="hero-tagline">
-      <strong>If you love something, make it your career.</strong> A creative ecosystem — not a pipeline.
-    </p>
-    <div class="hero-cta-hint">
-      <span class="dot"></span>
-      <span>Click any node to explore</span>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow">Myanmar Creative Technology College · Est. 2017</div>
+      <h1 class="hero-h1">
+        Train<span class="amp">&amp;</span><span class="italic">Place</span>
+      </h1>
+      <p class="hero-tagline">
+        <strong>If you love something, make it your career.</strong> A creative ecosystem — not a pipeline. We train digital artists to Pearson BTEC standards, then place them in real studios.
+      </p>
+      <div class="hero-ctas">
+        <a class="hero-btn primary" href="#programs">Explore programs</a>
+        <a class="hero-btn" href="#showcase">See student work</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>Est. 2017</b><span>Yangon, Myanmar</span></div>
+        <div><b>Pearson BTEC</b><span>UK-accredited</span></div>
+        <div><b>75%</b><span>faculty were students</span></div>
+      </div>
     </div>
+
+    <figure class="hero-visual">
+      <img src="images/sw_01_moe_art04.jpg" alt="Student artwork by Moe Phyu Sin Thant" loading="eager" onerror="this.closest('.hero-visual').style.display='none'" />
+      <figcaption class="hero-visual-cap">
+        <b>Moe Phyu Sin Thant</b>
+        <span>HND 5 · Student work</span>
+      </figcaption>
+    </figure>
   </div>
 
-  <div class="graph-container">
-    <svg id="node-graph" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet"></svg>
-  </div>
-
-  <div class="legend">
-    <div class="legend-item"><span class="legend-dot root"></span>Core</div>
-    <div class="legend-item"><span class="legend-dot train"></span>Train</div>
-    <div class="legend-item"><span class="legend-dot place"></span>Place</div>
-    <div class="legend-item"><span class="legend-dot loop"></span>Loop</div>
-  </div>
+  <svg id="node-graph" viewBox="0 0 1600 900" aria-hidden="true"></svg>
 
   <div class="scroll-cue">
     <span class="scroll-cue-line"></span>
