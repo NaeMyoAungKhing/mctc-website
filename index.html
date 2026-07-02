@@ -150,6 +150,24 @@
   }
   .hero-copy { max-width: 560px; }
 
+  /* Signature flame — real flame video keyed on a canvas, floating as a UI accent */
+  .hero-flame {
+    position: absolute; z-index: 1; pointer-events: none;
+    top: clamp(2.5rem, 8vh, 6rem);
+    left: clamp(1.25rem, 4vw, 4rem);
+    width: clamp(80px, 9vw, 132px); aspect-ratio: 293 / 454;
+    background: url('images/flame.png') center/contain no-repeat;
+    filter: drop-shadow(0 0 26px rgba(138,75,208,0.55)) drop-shadow(0 6px 14px rgba(255,145,77,0.25));
+    animation: flameFloat 5.5s ease-in-out infinite;
+    opacity: 0.96;
+  }
+  .hero-flame video { display: none; }
+  .hero-flame canvas { width: 100%; height: 100%; display: block; }
+  @keyframes flameFloat {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-6px) scale(1.03); }
+  }
+
   .eyebrow {
     font-family: var(--mono);
     font-size: 0.66rem;
@@ -1273,6 +1291,7 @@
     .nav-links.open { max-height: 80vh; opacity: 1; }
     .nav-links a { padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
     .hero { padding: 5.5rem 1.25rem 3rem; min-height: auto; }
+    .hero-flame { display: none; }
     .hero-inner { grid-template-columns: 1fr; gap: 2.2rem; }
     .hero-visual { order: -1; justify-self: stretch; max-width: 100%; aspect-ratio: 16 / 10; }
     .hero-h1 { font-size: clamp(2.4rem, 13vw, 3.2rem); }
@@ -1331,6 +1350,12 @@
 <!-- ========== HERO ========== -->
 <section class="hero" id="system">
 
+  <!-- Signature living-system flame (real flame video, green-screen keyed live on a canvas — UI only) -->
+  <div class="hero-flame" aria-hidden="true">
+    <video id="flameVid" src="experience/flame.mp4" muted loop autoplay playsinline preload="auto"></video>
+    <canvas id="flameCanvas" width="360" height="360"></canvas>
+  </div>
+
   <div class="hero-inner">
     <div class="hero-copy">
       <div class="eyebrow">Myanmar Creative Technology College · Est. 2017</div>
@@ -1352,10 +1377,10 @@
     </div>
 
     <figure class="hero-visual">
-      <img src="images/hero_event.jpg" alt="MCTC students' Toys &amp; Art mural and cosplay at a showcase event" loading="eager" onerror="this.closest('.hero-visual').style.display='none'" />
+      <img src="images/hero_student.jpg" alt="An MCTC student drawing on a graphics tablet at a showcase" loading="eager" onerror="this.closest('.hero-visual').style.display='none'" />
       <figcaption class="hero-visual-cap">
-        <b>Toys &amp; Art Showcase</b>
-        <span>Student art · MCTC community</span>
+        <b>Digital art, in progress</b>
+        <span>Student at work · MCTC</span>
       </figcaption>
     </figure>
   </div>
@@ -2211,6 +2236,43 @@ document.querySelectorAll('.triad-card, .sub-pillar, .img-placeholder').forEach(
     };
     tryExt(0);
   });
+})();
+</script>
+
+<!-- Live green-screen key of the flame video onto its canvas (UI accent) -->
+<script>
+(function(){
+  var v = document.getElementById('flameVid');
+  var c = document.getElementById('flameCanvas');
+  if (!v || !c) return;
+  var ctx = c.getContext('2d');
+  var off = document.createElement('canvas');
+  var octx = off.getContext('2d', { willReadFrequently: true });
+  function fit(){ var w = v.videoWidth||360, h = v.videoHeight||360; c.width = off.width = w; c.height = off.height = h; }
+  v.addEventListener('loadedmetadata', fit);
+  var playing = false;
+  function tryPlay(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  v.addEventListener('canplay', function(){ playing = true; tryPlay(); });
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) tryPlay(); });
+  tryPlay();
+  function frame(){
+    try {
+      if (v.readyState >= 2 && v.videoWidth) {
+        if (!c.width) fit();
+        octx.drawImage(v, 0, 0, off.width, off.height);
+        var img = octx.getImageData(0, 0, off.width, off.height), a = img.data;
+        for (var i = 0; i < a.length; i += 4) {
+          var r = a[i], g = a[i+1], b = a[i+2];
+          if (g > 85 && g > r + 22 && g > b + 22) { a[i+3] = 0; }
+          else if (g > r && g > b) { var mn = r < b ? r : b; a[i+1] = (mn*0.55 + g*0.45)|0; }
+        }
+        ctx.putImageData(img, 0, 0);
+        c.parentNode.style.backgroundImage = 'none'; /* hide PNG fallback once live keying runs */
+      }
+    } catch(e) {}
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
