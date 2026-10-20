@@ -144,6 +144,7 @@ em,.accent{font-style:italic;color:var(--violet-soft)}
 .hero,.page-hero{position:relative;overflow:hidden}
 .hero::before,.page-hero::before{content:"";position:absolute;z-index:1;pointer-events:none;top:clamp(.6rem,2vh,1.4rem);left:clamp(.5rem,1.6vw,1.4rem);width:clamp(44px,4.2vw,64px);aspect-ratio:171/267;background:url(/images/flame.png) center/contain no-repeat;filter:drop-shadow(0 0 16px rgba(138,75,208,.5)) drop-shadow(0 6px 12px rgba(255,145,77,.25));animation:fxFloat 5.5s ease-in-out infinite,fxFlicker 2.4s ease-in-out infinite,fxFlare 11s ease-in-out infinite}
 .hero::after,.page-hero::after{content:"";position:absolute;z-index:2;pointer-events:none;left:0;right:0;top:-12%;height:10%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.045),transparent);mix-blend-mode:screen;animation:fxScan 9s linear infinite}
+.page-hero::before{left:auto;right:clamp(.8rem,2vw,1.6rem);top:clamp(1rem,3vh,1.8rem)}
 .hero h1,.page-hero h1{animation:fxGlitch 7s steps(1,end) infinite}
 .hero .kick,.page-hero .kick{animation:fxGlitch 7s steps(1,end) infinite 2.3s}
 @keyframes fxFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
