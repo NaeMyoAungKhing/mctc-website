@@ -100,7 +100,7 @@ em,.accent{font-style:italic;color:var(--violet-soft)}
 .card-body{padding:1.1rem 1.2rem 1.3rem}
 .card-kick{font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--violet-soft);margin-bottom:.5rem}
 .card-title{font-size:1.05rem;font-weight:600;line-height:1.3}.card-text{color:var(--dim);font-size:.88rem;margin-top:.5rem}
-.card.sq .card-media{aspect-ratio:1}
+.card.sq .card-media{aspect-ratio:1}.card.tall .card-media{aspect-ratio:3/4}
 
 /* feature list (pillar pages) */
 .feature-list{display:grid;gap:1rem}
