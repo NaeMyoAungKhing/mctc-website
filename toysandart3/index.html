@@ -17,11 +17,12 @@ a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .bar a{color:var(--dim)}.bar a:hover{color:#fff}.bar .mctc{display:flex;align-items:center;gap:.5rem}.bar .mctc img{width:26px}
 /* hero */
 .hero{position:relative;padding:clamp(3rem,9vw,7rem) 0 clamp(2.5rem,6vw,5rem);background:var(--pink) url(/images/toysandart3/grid.svg);color:#fff;overflow:hidden}
-.hero .chars{position:absolute;right:max(1rem,calc(50% - 560px));bottom:-3%;height:100%;pointer-events:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.35))}
+.hero .chars{position:absolute;right:max(1rem,calc(50% - 640px));bottom:-3%;height:92%;pointer-events:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.35))}
 .hero .chars img{height:100%;width:auto;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.hero .wrap>*:not(.chars){max-width:min(100%,600px)}
-@media(max-width:1100px){.hero .chars{height:92%;right:-6%}}
-@media(max-width:800px){.hero .chars{height:60%;right:-18%;opacity:.5}}
+.hero .wrap>*:not(.chars){max-width:min(100%,520px)}
+@media(max-width:1280px){.hero .chars{height:80%}}
+@media(max-width:1100px){.hero .chars{height:70%;right:-4%}}
+@media(max-width:800px){.hero .chars{height:55%;right:-14%;opacity:.55}}
 .hero .logo{width:clamp(180px,26vw,320px);margin-bottom:1rem;filter:drop-shadow(0 8px 0 rgba(0,0,0,.25))}
 .hero .wrap{position:relative;z-index:1}
 .hero .side{position:absolute;top:1.2rem;font-size:.7rem;letter-spacing:.3em;writing-mode:vertical-rl;color:rgba(255,255,255,.75)}
