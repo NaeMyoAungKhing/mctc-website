@@ -17,10 +17,11 @@ a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .bar a{color:var(--dim)}.bar a:hover{color:#fff}.bar .mctc{display:flex;align-items:center;gap:.5rem}.bar .mctc img{width:26px}
 /* hero */
 .hero{position:relative;padding:clamp(3rem,9vw,7rem) 0 clamp(2.5rem,6vw,5rem);background:var(--pink) url(/images/toysandart3/grid.svg);color:#fff;overflow:hidden}
-.hero .chars{position:absolute;right:-2%;bottom:-4%;height:112%;display:flex;align-items:flex-end;gap:0;pointer-events:none;filter:drop-shadow(0 20px 40px rgba(0,0,0,.35))}
+.hero .chars{position:absolute;right:max(1rem,calc(50% - 600px));bottom:-5%;height:104%;pointer-events:none;filter:drop-shadow(0 24px 40px rgba(0,0,0,.35))}
 .hero .chars img{height:100%;width:auto;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
-.hero .chars img+img{margin-left:-14%}
-@media(max-width:900px){.hero .chars{height:62%;opacity:.55;right:-20%}}
+.hero .wrap>*:not(.chars){max-width:min(100%,640px)}
+@media(max-width:1100px){.hero .chars{height:92%;right:-6%}}
+@media(max-width:800px){.hero .chars{height:60%;right:-18%;opacity:.5}}
 .hero .logo{width:clamp(180px,26vw,320px);margin-bottom:1rem;filter:drop-shadow(0 8px 0 rgba(0,0,0,.25))}
 .hero .wrap{position:relative;z-index:1}
 .hero .side{position:absolute;top:1.2rem;font-size:.7rem;letter-spacing:.3em;writing-mode:vertical-rl;color:rgba(255,255,255,.75)}
@@ -83,12 +84,12 @@ a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 .tape{background:var(--pink);color:#fff;font-weight:900;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem 0;white-space:nowrap;overflow:hidden;transform:rotate(-1.5deg) scale(1.02);margin:-.6rem 0}
 .tape span{margin-right:2.5rem}
 @media(prefers-reduced-motion:reduce){.dio-stage,.dio-stage img{transition:none}}
-@media(max-width:1100px){.hero .chars{opacity:.5}}
+
 </style></head><body>
 <div class="wrap bar"><a class="mctc" href="/"><img src="/images/logo_mark.png" alt="">MCTC presents</a><span><a href="https://www.facebook.com/MCTC.mm" target="_blank" rel="noopener">@toysandart.mm</a> &nbsp;·&nbsp; <a href="#sponsors">Sponsors</a> &nbsp;·&nbsp; <a href="#makers">Makers</a></span></div>
 <section class="hero">
 <div class="side l"><span class="jp">創造</span> SOUZOU · CREATE</div><div class="side r"><span class="jp">団結</span> DANKETSU · UNITE</div>
-<div class="chars" aria-hidden="true"><img src="/images/toysandart3/char_gyro.webp" alt="" data-depth="1"><img src="/images/toysandart3/char_johnny.webp" alt="" data-depth="2"></div>
+<div class="chars" aria-hidden="true"><img src="/images/toysandart3/char_gyro.webp" alt="" data-depth="1"></div>
 <div class="wrap">
 <img class="logo" src="/images/toysandart3/logo.png" alt="Toys & Art Vol.3"><br><span class="tag ghost" style="border-color:rgba(255,255,255,.5);color:#fff">Save the date · <span class="jp">日付は決まった</span></span>
 <h1 class="sr" style="position:absolute;left:-9999px">Toys &amp; Art Vol.3</h1><div class="when" style="margin-top:1.2rem"><b style="font-size:clamp(2.4rem,7vw,5rem);line-height:1">Imagine . Create . Explore</b></div>
